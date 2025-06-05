@@ -11,6 +11,6 @@ package View;
 public class Main {
     public static void main(String[] args) {
         Login ui = new Login();
-        ui.openWindow();
+        ui.setVisible(true);
     }
 }
