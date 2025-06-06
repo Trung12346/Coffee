@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
-  <Properties>
-    <Property name="defaultCloseOperation" type="int" value="3"/>
-  </Properties>
-  <SyntheticProperties>
-    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
-    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
-  </SyntheticProperties>
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -116,8 +109,8 @@
                 <Column editable="true" title="H&#x1ed9;i Vi&#xea;n M&#xe3;" type="java.lang.Integer"/>
                 <Column editable="true" title="T&#xea;n H&#x1ed9;i vi&#xea;n" type="java.lang.String"/>
                 <Column editable="true" title="S&#x1ed1; &#x110;i&#x1ec7;n Tho&#x1ea1;i H&#x1ed9;i Vi&#xea;n" type="java.lang.String"/>
-                <Column editable="true" title="M&#xe3; b&#x1ea3;o m&#x1ead;t" type="java.lang.String"/>
-                <Column editable="true" title="Th&#x1edd;i H&#x1ea1;n" type="java.lang.String"/>
+                <Column editable="true" title="H&#x1ebf;t H&#x1ea1;n" type="java.lang.String"/>
+                <Column editable="true" title="H&#x1ea1;ng" type="java.lang.String"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">

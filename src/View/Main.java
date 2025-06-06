@@ -43,5 +43,8 @@ public class Main {
         
         frameLogin.setVisible(false);
         System.out.println("hi");
+        
+        Home frameHome = new Home();
+        frameHome.setVisible(true);
     }
 }
