@@ -53,6 +53,11 @@ public class Home extends javax.swing.JFrame {
         jButton3.setText("Tạo đơn");
 
         jButton4.setText("Sản phẩm");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setText("Xem doanh thu");
 
@@ -65,6 +70,11 @@ public class Home extends javax.swing.JFrame {
         jButton10.setText("Nhân sự");
 
         jButton12.setText("Đăng xuất");
+        jButton12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton12ActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Home");
 
@@ -151,6 +161,25 @@ public class Home extends javax.swing.JFrame {
         panel.repaint();
         panel.revalidate();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        SanPham frameSanPham = new SanPham();
+        frameSanPham.setSize(771, 461);
+        frameSanPham.setLocation(0, 0);
+        
+        panel.removeAll();
+        panel.add(frameSanPham, BorderLayout.CENTER);
+        panel.repaint();
+        panel.revalidate();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+        // TODO add your handling code here:
+        Main mainThread = new Main();
+        mainThread.start();
+        dispose();
+    }//GEN-LAST:event_jButton12ActionPerformed
 
     /**
      * @param args the command line arguments

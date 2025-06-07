@@ -9,13 +9,15 @@ import Service.LoginDAO;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.lang.Thread;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 /**
  *
  * @author maith
  */
-public class Main {
-    public static void main(String[] args) throws SQLException, NoSuchAlgorithmException, InterruptedException {
+public class Main extends Thread {
+    public static void mainProgram() throws SQLException, NoSuchAlgorithmException, InterruptedException {
         boolean login = false;
         Login frameLogin = new Login();
         frameLogin.setVisible(true);
@@ -46,5 +48,21 @@ public class Main {
         
         Home frameHome = new Home();
         frameHome.setVisible(true);
+    }
+    public static void main(String[] args) throws SQLException, NoSuchAlgorithmException, InterruptedException {
+        mainProgram();
+    }
+    @Override
+    public void run() {
+        System.out.println("run called");
+
+        try {
+            System.out.println("running mainProgram()");
+            mainProgram();
+        } catch (SQLException | NoSuchAlgorithmException | InterruptedException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        System.out.println("main ran");
     }
 }
