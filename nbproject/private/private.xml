@@ -4,9 +4,17 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/View/Main.java</file>
+<<<<<<< HEAD
             <file>file:/C:/Users/maith/Downloads/Coffee/src/Model/JSON.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/View/SanPham.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/View/Home.java</file>
+=======
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/View/Membership.java</file>
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/Model/JSON.java</file>
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/View/SanPham.java</file>
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/View/Home.java</file>
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/Service/dbConnection.java</file>
+>>>>>>> voucher
         </group>
     </open-files>
 </project-private>
