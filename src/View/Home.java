@@ -68,6 +68,11 @@ public class Home extends javax.swing.JFrame {
         jButton8.setText("Báo cáo");
 
         jButton10.setText("Nhân sự");
+        jButton10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton10ActionPerformed(evt);
+            }
+        });
 
         jButton12.setText("Đăng xuất");
         jButton12.addActionListener(new java.awt.event.ActionListener() {
@@ -180,6 +185,18 @@ public class Home extends javax.swing.JFrame {
         mainThread.start();
         dispose();
     }//GEN-LAST:event_jButton12ActionPerformed
+
+    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+        // TODO add your handling code here:
+        Staff frameStaff = new Staff();
+        frameStaff.setSize(771, 461);
+        frameStaff.setLocation(0, 0);
+        
+        panel.removeAll();
+        panel.add(frameStaff, BorderLayout.CENTER);
+        panel.repaint();
+        panel.revalidate();
+    }//GEN-LAST:event_jButton10ActionPerformed
 
     /**
      * @param args the command line arguments
