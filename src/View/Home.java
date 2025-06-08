@@ -62,6 +62,11 @@ public class Home extends javax.swing.JFrame {
         jButton5.setText("Xem doanh thu");
 
         jButton6.setText("Voucher");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
 
         jButton7.setText("Nhập/xuất kho");
 
@@ -180,6 +185,18 @@ public class Home extends javax.swing.JFrame {
         mainThread.start();
         dispose();
     }//GEN-LAST:event_jButton12ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+        Voucher frameVoucher = new Voucher();
+        frameVoucher.setSize(771, 461);
+        frameVoucher.setLocation(0, 0);
+        
+        panel.removeAll();
+        panel.add(frameVoucher, BorderLayout.CENTER);
+        panel.repaint();
+        panel.revalidate();
+    }//GEN-LAST:event_jButton6ActionPerformed
 
     /**
      * @param args the command line arguments

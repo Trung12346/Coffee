@@ -136,8 +136,6 @@ public class SanPham extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblsp = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
         jLabel1.setText("Tên:");
 
         jLabel2.setText("Giá:");
@@ -170,8 +168,8 @@ public class SanPham extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(tblsp);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -204,7 +202,6 @@ public class SanPham extends javax.swing.JPanel {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnnaddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnnaddActionPerformed
