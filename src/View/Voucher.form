@@ -89,7 +89,7 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="80" green="80" red="80" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="YYYY-MM-DD"/>
+        <Property name="text" type="java.lang.String" value="dd/MM/yyyy"/>
       </Properties>
       <Events>
         <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtstartdateFocusGained"/>
@@ -107,8 +107,13 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="80" green="80" red="80" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="YYYY-MM-DD"/>
+        <Property name="text" type="java.lang.String" value="dd/MM/yyyy"/>
       </Properties>
+      <Events>
+        <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtenddateFocusGained"/>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtenddateFocusLost"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtenddateActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
@@ -127,7 +132,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="jButton1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="&#xc1;P D&#x1ee4;NG"/>
+        <Property name="text" type="java.lang.String" value="Th&#xea;m"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
@@ -144,7 +149,7 @@
                 <Column editable="true" title="M&#xe3; Voucher" type="java.lang.Integer"/>
                 <Column editable="true" title="Ng&#xe0;y b&#x1eaf;t &#x111;&#x1ea7;u" type="java.lang.String"/>
                 <Column editable="true" title="Ng&#xe0;y h&#x1ebf;t hi&#x1ec7;u l&#x1ef1;c" type="java.lang.String"/>
-                <Column editable="true" title="M&#xe3; S&#x1ea3;n Ph&#x1ea9;m &#xe1;p d&#x1ee5;ng" type="java.lang.Float"/>
+                <Column editable="true" title="M&#xe3; S&#x1ea3;n Ph&#x1ea9;m &#xe1;p d&#x1ee5;ng" type="java.lang.Integer"/>
                 <Column editable="true" title="Gi&#xe1; S&#x1ea3;n Ph&#x1ea9;m" type="java.lang.Float"/>
               </Table>
             </Property>

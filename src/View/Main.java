@@ -27,6 +27,7 @@ public class Main extends Thread {
             // System.out.println(!ui.object.isEmpty());
             if(!frameLogin.object.isEmpty()) {
                 // System.out.println("not empty anymore");
+                System.out.println(frameLogin.object);
                 JSONObject jo = JSON.parseJSON(frameLogin.object);
                 // System.out.println(jo);
                 if(LoginDAO.isExist(jo.getString("username"))) {

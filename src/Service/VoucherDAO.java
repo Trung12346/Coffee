@@ -12,11 +12,11 @@ public class VoucherDAO {
     public ResultSet hienthi(){
         try {
             Connection conn = dbConnection.connect();
-            String query = "SELECT*FROM voucher";
+            String query = "SELECT * FROM voucher";
             PreparedStatement ps=conn.prepareStatement(query);
             return ps.executeQuery(); 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println(e);
             return null;
         }
     }

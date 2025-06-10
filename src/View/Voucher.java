@@ -30,10 +30,11 @@ public class Voucher extends javax.swing.JPanel {
         try {
             while (rs.next()) {
                 Model.addRow(new Object[]{
-                    rs.getInt("Ma"),
-                    rs.getString("Ten"),
-                    rs.getString("TrangThai"),
-                    rs.getInt("GiaBan")
+                    rs.getInt("voucher_id"),
+                    rs.getString("start_date"),
+                    rs.getString("end_date"),
+                    rs.getInt("product_id"),
+                    rs.getFloat("new_product_price")
                 });
             }
         } catch (Exception e) {
@@ -66,7 +67,7 @@ public class Voucher extends javax.swing.JPanel {
         jLabel1.setText("Ngày bắt đầu:");
 
         txtstartdate.setForeground(new java.awt.Color(128, 128, 128));
-        txtstartdate.setText("YYYY-MM-DD");
+        txtstartdate.setText("dd/MM/yyyy");
         txtstartdate.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtstartdateFocusGained(evt);
@@ -84,14 +85,27 @@ public class Voucher extends javax.swing.JPanel {
         jLabel2.setText("Ngày Kết Thúc:");
 
         txtenddate.setForeground(new java.awt.Color(128, 128, 128));
-        txtenddate.setText("YYYY-MM-DD");
+        txtenddate.setText("dd/MM/yyyy");
+        txtenddate.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtenddateFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtenddateFocusLost(evt);
+            }
+        });
+        txtenddate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtenddateActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Giá sau khi áp dụng");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel4.setText("VOUCHER");
 
-        jButton1.setText("ÁP DỤNG");
+        jButton1.setText("Thêm");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -110,7 +124,7 @@ public class Voucher extends javax.swing.JPanel {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Float.class, java.lang.Float.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Float.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -211,7 +225,7 @@ public class Voucher extends javax.swing.JPanel {
 
     private void txtstartdateFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtstartdateFocusGained
         // TODO add your handling code here:
-        if(txtstartdate.getText().equals("YYYY-MM-DD")) {
+        if(txtstartdate.getText().equals("dd/MM/yyyy")) {
             txtstartdate.setForeground(Color.BLACK);
             txtstartdate.setText("");
         }
@@ -221,9 +235,29 @@ public class Voucher extends javax.swing.JPanel {
         // TODO add your handling code here:
         if(txtstartdate.getText().equals("")) {
             txtstartdate.setForeground(Color.GRAY);
-            txtstartdate.setText("YYYY-MM-DD");
+            txtstartdate.setText("dd/MM/yyyy");
         }
     }//GEN-LAST:event_txtstartdateFocusLost
+
+    private void txtenddateFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtenddateFocusGained
+        // TODO add your handling code here:
+        if(txtenddate.getText().equals("dd/MM/yyyy")) {
+            txtenddate.setForeground(Color.BLACK);
+            txtenddate.setText("");
+        }
+    }//GEN-LAST:event_txtenddateFocusGained
+
+    private void txtenddateFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtenddateFocusLost
+        // TODO add your handling code here:
+        if(txtenddate.getText().equals("")) {
+            txtenddate.setForeground(Color.GRAY);
+            txtenddate.setText("dd/MM/yyyy");
+        }
+    }//GEN-LAST:event_txtenddateFocusLost
+
+    private void txtenddateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtenddateActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtenddateActionPerformed
 
     /**
      * @param args the command line arguments
