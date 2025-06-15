@@ -3,15 +3,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Service;
+
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Random;
+
 /**
  *
  * @author ADMIN
  */
 public class StaffDAO {
+
     final String characters = "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+
     public ResultSet loaddata() {
 //        Connection conn = null;
         try {
@@ -21,12 +26,13 @@ public class StaffDAO {
 //            }
             String query = "SELECT staff_id, age, email, phone FROM staff";
             PreparedStatement stmt = conn.prepareStatement(query);
-            return stmt.executeQuery(); 
+            return stmt.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
     }
+
     public boolean addStaff(String name, int age, String email, String phone, String args, String password) throws NoSuchAlgorithmException {
 //        Connection conn = null;
         try {
@@ -35,7 +41,7 @@ public class StaffDAO {
 //                throw new SQLException("Không thể kết nối đến database");
 //            }
             String salt = "";
-            for(int i = 0; i < 32; i++) {
+            for (int i = 0; i < 32; i++) {
                 int randomIndex = new Random().nextInt(characters.length());
                 salt += characters.charAt(randomIndex);
             }
@@ -45,7 +51,7 @@ public class StaffDAO {
             String query_1 = "GO";
 //            String query_2 = "DECLARE @newId INT";
             String query_3 = "SELECT TOP 1 staff_id FROM staff ORDER BY staff_id DESC";
-            
+
 //            PreparedStatement stmt = conn.prepareStatement(query);
 //            stmt.setString(1, name);
 //            stmt.setInt(2, age);
@@ -72,6 +78,19 @@ public class StaffDAO {
             return false;
         }
     }
+
+    public ArrayList getStaffIds() throws SQLException {
+        ArrayList ids = new ArrayList();
+        Connection conn = dbConnection.connect();
+        String query = "SELECT staff_id FROM staff";
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        while (rs.next()) {
+            ids.add(rs.getInt("staff_id"));
+
+        }
+        return ids;
+    }
 //    public boolean deleteStaff(int staffId) {
 //        Connection conn = null;
 //        try {
@@ -97,6 +116,7 @@ public class StaffDAO {
 //            }
 //        }
 //    }
+
     public boolean updateStaff(int staffId, int age, String email, String phone) {
         Connection conn = null;
         try {
@@ -125,6 +145,7 @@ public class StaffDAO {
             }
         }
     }
+
     public static int getIdFromUsername(String username) throws SQLException {
         String query = String.format("SELECT staff_id FROM account WHERE username LIKE '%s'", username);
         System.out.println(query);
@@ -132,7 +153,7 @@ public class StaffDAO {
         Statement stm = conn.createStatement();
         ResultSet rs = stm.executeQuery(query);
         rs.next();
-        
+
         return rs.getInt("staff_id");
     }
 }

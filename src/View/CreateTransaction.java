@@ -145,9 +145,7 @@ public class CreateTransaction extends javax.swing.JPanel {
                 membershipDiscount = jo.getFloat("discount");
             }
             
-        } catch (NullPointerException ex) {
-
-        }
+        } catch (NullPointerException ex) {}
 
         TransactionDataSet transaction = new TransactionDataSet(
                 currentTimeSql,

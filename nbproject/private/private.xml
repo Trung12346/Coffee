@@ -12,10 +12,11 @@
             <file>file:/C:/Users/maith/Downloads/Coffee/src/Model/Table2.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/Model/TransactionDataSet.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/View/Main.java</file>
-            <file>file:/C:/Users/maith/Downloads/Coffee/src/Service/TransactionDAO.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/View/Voucher.java</file>
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/Service/TransactionDAO.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/Service/SanPhamDAO.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/View/Staff.java</file>
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/View/ViewTransaction.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/Model/MembershipDataSet.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/View/Login.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/Service/MembershipDAO.java</file>
@@ -26,8 +27,8 @@
             <file>file:/C:/Users/maith/Downloads/Coffee/src/Model/ProductDataSet.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/Model/Recipt.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/Model/VoucherDataSet.java</file>
-            <file>file:/C:/Users/maith/Downloads/Coffee/src/Service/GlobalVariables.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/Model/ReciptRow.java</file>
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/Service/GlobalVariables.java</file>
         </group>
     </open-files>
 </project-private>
