@@ -15,7 +15,7 @@ import java.sql.*;
  */
 public class LoginDAO {
 
-    private static String SHA256(String originalString) throws NoSuchAlgorithmException {
+    public static String SHA256(String originalString) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] encodedhash = digest.digest(
                 originalString.getBytes(StandardCharsets.UTF_8));
@@ -32,7 +32,7 @@ public class LoginDAO {
 
     public static boolean isExist(String username) throws SQLException {
         Connection conn = dbConnection.connect();
-        String query = String.format("SELECT username FROM account WHERE username='%s'", username);
+        String query = String.format("SELECT username FROM account WHERE username LIKE '%s'", username);
         Statement stm = conn.createStatement();
         ResultSet rs = stm.executeQuery(query);
         if(rs.next()) {
@@ -41,9 +41,9 @@ public class LoginDAO {
         return false;
     }
 
-    public static boolean checkCredens(String username, String password) throws SQLException, NoSuchAlgorithmException {
+    public static String checkCredens(String username, String password) throws SQLException, NoSuchAlgorithmException {
         Connection conn = dbConnection.connect();
-        String query = String.format("SELECT * FROM account WHERE username='%s'", username);
+        String query = String.format("SELECT * FROM account WHERE username LIKE '%s'", username);
         Statement stm = conn.createStatement();
         ResultSet rs = stm.executeQuery(query);
         rs.next();
@@ -53,8 +53,8 @@ public class LoginDAO {
         //System.out.println(SHA256(passwordNSalt));
         //System.out.println(rs.getString("hash_token"));
         if(SHA256(passwordNSalt).equals(rs.getString("hash_token"))) {
-            return true;
+            return rs.getString("args");
         }
-        return false;
+        return null;
     }
 }

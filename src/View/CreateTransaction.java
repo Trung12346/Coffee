@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package View;
+
 import Service.TransactionDAO;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
@@ -21,11 +22,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import Model.objectToInt;
 import java.text.SimpleDateFormat;
 import org.json.*;
+import Model.MembershipDataSet;
+import Model.Recipt;
+import Model.ReciptRow;
+import Service.GlobalVariables;
+import java.util.HashSet;
+
 /**
  *
  * @author maith
  */
-public class CreateTransaction extends javax.swing.JFrame {
+public class CreateTransaction extends javax.swing.JPanel {
 
     /**
      * Creates new form CreateTransaction
@@ -34,17 +41,19 @@ public class CreateTransaction extends javax.swing.JFrame {
     DefaultTableModel Model_1;
     DefaultTableModel Model_2;
     ArrayList<Table2> Table2Rows = new ArrayList();
+
     public CreateTransaction() throws SQLException {
         initComponents();
-        
+
         Model_1 = (DefaultTableModel) jTable1.getModel();
         Model_2 = (DefaultTableModel) jTable2.getModel();
         loadTable_1();
     }
+
     public void loadTable_1() throws SQLException {
         ResultSet rs = transactDAO.getProducts();
         Model_1.setRowCount(1);
-        while(rs.next()) { 
+        while (rs.next()) {
             Model_1.addRow(new Object[]{
                 String.valueOf(rs.getInt("product_id")),
                 rs.getString("product_name"),
@@ -52,6 +61,7 @@ public class CreateTransaction extends javax.swing.JFrame {
             });
         }
     }
+
     public void loadTable_2(ArrayList<Table2> rows) {
         Model_2.setRowCount(1);
         rows.forEach(row -> {
@@ -63,67 +73,147 @@ public class CreateTransaction extends javax.swing.JFrame {
             });
         });
     }
+
     public String requestRecipt() throws JsonProcessingException, SQLException {
         ArrayList<Integer> productIds = new ArrayList();
         ArrayList quantities = new ArrayList();
         ArrayList<ProductDataSet> products = new ArrayList();
-        
-        for(int i = 1; i < jTable2.getRowCount(); i++) {
+
+        for (int i = 1; i < jTable2.getRowCount(); i++) {
             productIds.add(Integer.parseInt(jTable2.getValueAt(i, 0).toString()));
         }
-        for(int i = 1; i < jTable2.getRowCount(); i++) {
+        for (int i = 1; i < jTable2.getRowCount(); i++) {
             quantities.add(jTable2.getValueAt(i, 3));
         }
-        
+
         AtomicInteger index = new AtomicInteger();
         productIds.forEach(productId -> {
             try {
                 ResultSet rs = transactDAO.selectProductById(Integer.parseInt(productId.toString()));
                 rs.next();
                 products.add(new ProductDataSet(rs.getInt("product_id"),
-                                                rs.getString("product_name"),
-                                                rs.getFloat("product_price"),
-                                                Integer.parseInt(quantities.get(index.getAndIncrement()).toString())
-                                                ));
+                        rs.getString("product_name"),
+                        rs.getFloat("product_price"),
+                        Integer.parseInt(quantities.get(index.getAndIncrement()).toString())
+                ));
             } catch (SQLException ex) {
                 Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
         });
         int[] ids = objectToInt.objectToInteger(productIds);
         ArrayList<VoucherDataSet> vouchers = new ArrayList();
         try {
-            JSONArray jo = JSON.parseJSON(transactDAO.searchVoucher(ids)).getJSONArray("vouchers");
-            for(int i = 0; i < jo.length(); i++) {
-//                VoucherDataSet ds = new VoucherDataSet(
-//                                                        new JSONObject(jo.get(i)).getInt("id"),
-//                                                        new java.sql.Date(new JSONObject(jo.get(i)).getInt("startDate")),
-//                                                        new java.sql.Date(new JSONObject(jo.get(i)).getInt("endDate")),
-//                                                        new JSONObject(jo.get(i)).getInt("productId"),
-//                                                        new JSONObject(jo.get(i)).getFloat("newPrice")
-//                        
-//                                                    );
-                //vouchers.add(jo.get(i));
+            String vouchersRawJSON = transactDAO.searchVoucher(ids);
+            JSONArray ja = new JSONArray(JSON.parseJSON(vouchersRawJSON).getJSONArray("vouchers"));
+
+            for (int i = 0; i < ja.length(); i++) {
+                JSONObject jo = JSON.parseJSON(ja.get(i).toString());
+                VoucherDataSet vds = new VoucherDataSet(
+                        jo.getInt("id"),
+                        new java.sql.Date(jo.getInt("startDate")),
+                        new java.sql.Date(jo.getInt("endDate")),
+                        jo.getInt("productId"),
+                        jo.getFloat("newPrice")
+                );
+                vouchers.add(vds);
             }
 //            vouchers = new ArrayList(
 //                JSON.parseJSON(transactDAO.searchVoucher(ids)).getJSONArray("vouchers")
 //            );
-        } catch(SQLException ex) {
+        } catch (SQLException ex) {
             System.out.println("khong co voucher");
         }
-        
+
         java.util.Date currentTime = new java.util.Date();
         java.sql.Timestamp currentTimeSql = new java.sql.Timestamp(currentTime.getTime());
+        MembershipDataSet mds = new MembershipDataSet();
         
-        
+        float membershipDiscount = 0;
+        try {
+            JSONObject jo = JSON.parseJSON(transactDAO.searchMembership(jTextField1.getText(), true));
+            if(jo.getString("securityCode").equals(jTextField2.getText())) {
+                mds = new MembershipDataSet(
+                    jo.getInt("id"),
+                    jo.getString("name"),
+                    jo.getString("phone"),
+                    jo.getString("securityCode"),
+                    jo.getString("rank"),
+                    new java.sql.Date(jo.getInt("expirDate")),
+                    jo.getFloat("discount")
+                );
+                membershipDiscount = jo.getFloat("discount");
+            }
+            
+        } catch (NullPointerException ex) {
+
+        }
+
         TransactionDataSet transaction = new TransactionDataSet(
-                                                                currentTimeSql,
-                                                                products,
-                                                                vouchers
-                                                                );
+                currentTimeSql,
+                products,
+                vouchers,
+                mds,
+                GlobalVariables.userId
+        );
+
+        java.util.Date utilDate = new java.util.Date(transaction.reciptDate.getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        float total = 0;
+        float totalAfterVoucher = 0;
+        Recipt r = new Recipt(20, 20);
+        ReciptRow rr = new ReciptRow(r.columnWidth_1, r.columnWidth_2);
+        rr.setParams("HOA DON:", " ");
+        r.addReciptRow(rr.row);
+        rr.setParams("Ngay:", sdf.format(utilDate));
+        r.addReciptRow(rr.row);
+        rr.setParams("--------------------", "--------------------");
+        r.addReciptRow(rr.row);
+
+//        transaction.products.forEach(product -> {
+//            float productTotal = product.productPrice * product.quantity;
+//            total += productTotal;
+//            rr.setParams(product.productName + " x" + String.valueOf(product.quantity), String.valueOf(productTotal));
+//            r.addReciptRow(rr.row);
+//        });
+        JSONObject jo = new JSONObject();
+        //ArrayList<Integer> voucherProductId = new ArrayList();
+        transaction.vouchers.forEach(voucher -> {
+            //voucherProductId.add(voucher.productId);
+            jo.put(String.valueOf(voucher.productId), voucher.newPrice);
+        });
+        
+        for(ProductDataSet product : transaction.products) {
+            float productPrice = product.productPrice; 
+//            if(voucherProductId.contains(product.productId)) {
+//                productPrice = 
+//            }
+            for(String key: jo.keySet()) {
+                if(key.equals(String.valueOf(product.productId))) {
+                    productPrice = Float.parseFloat(jo.get(key).toString());
+                }
+            }
+            float productTotal = product.productPrice * product.quantity;
+            float productTotalAfterVoucher = productPrice * product.quantity;
+            total += productTotal;
+            totalAfterVoucher += productTotalAfterVoucher;
+            rr.setParams(product.productName + " x" + String.valueOf(product.quantity), String.valueOf(productTotal));
+            r.addReciptRow(rr.row);
+        }
+        totalAfterVoucher = (totalAfterVoucher / 100) * (100 - membershipDiscount);
+        rr.setParams("", "");
+        r.addReciptRow(rr.row);
+        rr.setParams("Discount:", "-" + String.valueOf(total - totalAfterVoucher));
+        r.addReciptRow(rr.row);
+        rr.setParams("Total:", String.valueOf(totalAfterVoucher));
+        r.addReciptRow(rr.row);
+        jTextArea1.setText(r.getRecipt());
+        System.out.println(r.getRecipt());
+
 //        java.util.Date test = new java.util.Date(currentTimeSql.getTime());
 //        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 //        System.out.println(sdf.format(test));
+        System.out.println(JSON.StringifyJSON(transaction));
         return JSON.StringifyJSON(transaction);
     }
     /**
@@ -152,8 +242,6 @@ public class CreateTransaction extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -217,6 +305,7 @@ public class CreateTransaction extends javax.swing.JFrame {
 
         jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
+        jTextArea1.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         jTextArea1.setRows(5);
         jTextArea1.setText("HOÁ ĐƠN:");
         jScrollPane3.setViewportView(jTextArea1);
@@ -225,7 +314,7 @@ public class CreateTransaction extends javax.swing.JFrame {
 
         jLabel2.setText("Đơn");
 
-        jLabel3.setText("Hội viên");
+        jLabel3.setText("SDT Hội viên");
 
         jButton1.setText("Submit");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -250,47 +339,44 @@ public class CreateTransaction extends javax.swing.JFrame {
 
         jLabel4.setText("Code");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton3)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(22, 22, 22)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel1)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 666, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jButton1)
-                                    .addComponent(jButton2))))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                            .addGap(23, 23, 23)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2)
+                .addGap(17, 17, 17)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jButton3)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButton2)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 665, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 666, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jScrollPane2)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel4))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
-                .addContainerGap(32, Short.MAX_VALUE))
+                                        .addComponent(jLabel4)
+                                        .addGap(59, 59, 59))
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jButton1))
+                        .addGap(64, 64, 64)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(32, 32, 32)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -302,46 +388,44 @@ public class CreateTransaction extends javax.swing.JFrame {
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
-                .addGap(9, 9, 9)
+                .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
+                            .addComponent(jLabel3)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))))
-                .addGap(18, 18, 18)
-                .addComponent(jButton1)
-                .addContainerGap(40, Short.MAX_VALUE))
+                            .addComponent(jLabel4)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 179, Short.MAX_VALUE))
         );
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         int selectedRow = jTable1.getSelectedRow();
-        if(selectedRow >= 1) {
+        if (selectedRow >= 1) {
             ArrayList products = new ArrayList();
-            for(int i = 1; i < jTable2.getRowCount(); i++) {
+            for (int i = 1; i < jTable2.getRowCount(); i++) {
                 products.add(jTable2.getValueAt(i, 0));
             }
-            
+
             try {
-                if(products.contains(jTable1.getValueAt(selectedRow, 0).toString())) {
-                    JOptionPane.showMessageDialog(rootPane, "Da co san pham");
+                if (products.contains(jTable1.getValueAt(selectedRow, 0).toString())) {
+                    JOptionPane.showMessageDialog(this, "Da co san pham");
                     throw new Exception("product was already added");
                 }
                 ResultSet rs = transactDAO.selectProductById(Integer.parseInt(jTable1.getValueAt(selectedRow, 0).toString()));
                 rs.next();
                 Table2Rows.add(new Table2(String.valueOf(rs.getInt("product_id")),
-                                        rs.getString("product_name"),
-                                        String.valueOf(rs.getFloat("product_price")),
-                                        "1"
-                                        ));
+                        rs.getString("product_name"),
+                        String.valueOf(rs.getFloat("product_price")),
+                        "1"
+                ));
                 loadTable_2(Table2Rows);
             } catch (SQLException ex) {
                 Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
@@ -354,16 +438,18 @@ public class CreateTransaction extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         int selectedRow = jTable2.getSelectedRow();
-        if(selectedRow >= 1) {
+        if (selectedRow >= 1) {
             Table2Rows.remove(selectedRow - 1);
             loadTable_2(Table2Rows);
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String phone = jTextField1.getText().trim();
+        String sc = jTextField2.getText();
         try {
             // TODO add your handling code here:
-            System.out.println(requestRecipt());
+            transactDAO.createTransaction(requestRecipt());
         } catch (JsonProcessingException | SQLException ex) {
             Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -372,41 +458,41 @@ public class CreateTransaction extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CreateTransaction.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CreateTransaction.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CreateTransaction.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CreateTransaction.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    new CreateTransaction().setVisible(true);
-                } catch (SQLException ex) {
-                    Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-    }
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(CreateTransaction.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(CreateTransaction.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(CreateTransaction.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(CreateTransaction.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                try {
+//                    new CreateTransaction().setVisible(true);
+//                } catch (SQLException ex) {
+//                    Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//            }
+//        });
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

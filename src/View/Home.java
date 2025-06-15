@@ -3,7 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package View;
+
+import Service.GlobalVariables;
 import java.awt.BorderLayout;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author maith
@@ -15,6 +21,54 @@ public class Home extends javax.swing.JFrame {
      */
     public Home() {
         initComponents();
+        jButton1.setEnabled(false);
+        jButton2.setEnabled(false);
+        jButton3.setEnabled(false);
+        jButton4.setEnabled(false);
+        jButton5.setEnabled(false);
+        jButton6.setEnabled(false);
+        jButton7.setEnabled(false);
+        jButton8.setEnabled(false);
+        jButton10.setEnabled(false);
+
+        if (GlobalVariables.args.contains("+admin")) {
+            jButton1.setEnabled(true);
+            jButton2.setEnabled(true);
+            jButton3.setEnabled(true);
+            jButton4.setEnabled(true);
+            jButton5.setEnabled(true);
+            jButton6.setEnabled(true);
+            jButton7.setEnabled(true);
+            jButton8.setEnabled(true);
+            jButton10.setEnabled(true);
+        }
+        if (GlobalVariables.args.contains("+cong")) {
+            jButton2.setEnabled(true);
+        }
+        if (GlobalVariables.args.contains("+voucher")) {
+            jButton6.setEnabled(true);
+        }
+        if (GlobalVariables.args.contains("+membership")) {
+            jButton1.setEnabled(true);
+        }
+        if (GlobalVariables.args.contains("+report")) {
+            jButton8.setEnabled(true);
+        }
+        if (GlobalVariables.args.contains("+product")) {
+            jButton4.setEnabled(true);
+        }
+        if (GlobalVariables.args.contains("+createTransaction")) {
+            jButton3.setEnabled(true);
+        }
+        if (GlobalVariables.args.contains("+revenue")) {
+            jButton5.setEnabled(true);
+        }
+        if (GlobalVariables.args.contains("+staff")) {
+            jButton10.setEnabled(true);
+        }
+        if (GlobalVariables.args.contains("+warehouseLog")) {
+            jButton7.setEnabled(true);
+        }
     }
 
     /**
@@ -51,6 +105,11 @@ public class Home extends javax.swing.JFrame {
         jButton2.setText("Chấm công");
 
         jButton3.setText("Tạo đơn");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Sản phẩm");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -165,7 +224,7 @@ public class Home extends javax.swing.JFrame {
         Membership frameMembership = new Membership();
         frameMembership.setSize(771, 461);
         frameMembership.setLocation(0, 0);
-        
+
         panel.removeAll();
         panel.add(frameMembership, BorderLayout.CENTER);
         panel.repaint();
@@ -177,7 +236,7 @@ public class Home extends javax.swing.JFrame {
         SanPham frameSanPham = new SanPham();
         frameSanPham.setSize(771, 461);
         frameSanPham.setLocation(0, 0);
-        
+
         panel.removeAll();
         panel.add(frameSanPham, BorderLayout.CENTER);
         panel.repaint();
@@ -196,7 +255,7 @@ public class Home extends javax.swing.JFrame {
         Staff frameStaff = new Staff();
         frameStaff.setSize(771, 461);
         frameStaff.setLocation(0, 0);
-        
+
         panel.removeAll();
         panel.add(frameStaff, BorderLayout.CENTER);
         panel.repaint();
@@ -207,12 +266,30 @@ public class Home extends javax.swing.JFrame {
         Voucher frameVoucher = new Voucher();
         frameVoucher.setSize(771, 461);
         frameVoucher.setLocation(0, 0);
-        
+
         panel.removeAll();
         panel.add(frameVoucher, BorderLayout.CENTER);
         panel.repaint();
         panel.revalidate();
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        CreateTransaction frameRecipt;
+        try {
+            frameRecipt = new CreateTransaction();
+            frameRecipt.setSize(771, 461);
+            frameRecipt.setLocation(0, 0);
+
+            panel.removeAll();
+            panel.add(frameRecipt, BorderLayout.CENTER);
+            panel.repaint();
+            panel.revalidate();
+        } catch (SQLException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments

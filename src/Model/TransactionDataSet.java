@@ -15,6 +15,7 @@ public class TransactionDataSet {
     public ArrayList<ProductDataSet> products;
     public ArrayList<VoucherDataSet> vouchers;
     public MembershipDataSet membership;
+    public int staffId;
 
     public TransactionDataSet(int reciptId, Timestamp reciptDate, ArrayList<ProductDataSet> products, ArrayList<VoucherDataSet> vouchers, MembershipDataSet membership) {
         this.reciptId = reciptId;
@@ -24,11 +25,12 @@ public class TransactionDataSet {
         this.membership = membership;
     }
 
-    public TransactionDataSet(Timestamp reciptDate, ArrayList<ProductDataSet> products, ArrayList<VoucherDataSet> vouchers, MembershipDataSet membership) {
+    public TransactionDataSet(Timestamp reciptDate, ArrayList<ProductDataSet> products, ArrayList<VoucherDataSet> vouchers, MembershipDataSet membership, int staffId) {
         this.reciptDate = reciptDate;
         this.products = products;
         this.vouchers = vouchers;
         this.membership = membership;
+        this.staffId = staffId;
     }
 
     public TransactionDataSet(Timestamp reciptDate, ArrayList<ProductDataSet> products, ArrayList<VoucherDataSet> vouchers) {

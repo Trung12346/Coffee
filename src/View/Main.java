@@ -12,6 +12,8 @@ import java.lang.Thread;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import Service.GlobalVariables;
+import Service.StaffDAO;
 /**
  *
  * @author maith
@@ -22,6 +24,7 @@ public class Main extends Thread {
         Login frameLogin = new Login();
         frameLogin.setVisible(true);
         
+        
         while(!login) {
             Thread.sleep(500);
             // System.out.println(!ui.object.isEmpty());
@@ -31,8 +34,12 @@ public class Main extends Thread {
                 JSONObject jo = JSON.parseJSON(frameLogin.object);
                 // System.out.println(jo);
                 if(LoginDAO.isExist(jo.getString("username"))) {
-                    if(LoginDAO.checkCredens(jo.getString("username"), jo.getString("password"))) {
+                    String args = LoginDAO.checkCredens(jo.getString("username"), jo.getString("password"));
+                    if(args != null) {
                         login = true;
+                        String username = jo.getString("username");
+                        GlobalVariables.userId = StaffDAO.getIdFromUsername(username);
+                        GlobalVariables.args = args;
                     } else {
                         JOptionPane.showMessageDialog(frameLogin, "ten nguoi dung hoac mat khau sai");
                         frameLogin.object = "";
@@ -53,6 +60,7 @@ public class Main extends Thread {
     public static void main(String[] args) throws SQLException, NoSuchAlgorithmException, InterruptedException {
         mainProgram();
     }
+
     @Override
     public void run() {
         System.out.println("run called");

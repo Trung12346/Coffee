@@ -17,14 +17,19 @@ public class MembershipDataSet {
     private String securityCode;
     public String rank;
     public Date expirDate;
+    public float discount;
 
-    public MembershipDataSet(int id, String name, String phone, String securityCode, String rank, Date expirDate) {
+    public MembershipDataSet(int id, String name, String phone, String securityCode, String rank, Date expirDate, float discount) {
         this.id = id;
         this.name = name;
         this.phone = phone;
         this.securityCode = securityCode;
         this.rank = rank;
         this.expirDate = expirDate;
+        this.discount = discount;
+    }
+
+    public MembershipDataSet() {
     }
 
     public String getSecurityCode() {
