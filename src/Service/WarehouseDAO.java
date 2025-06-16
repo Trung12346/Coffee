@@ -36,14 +36,14 @@ public class WarehouseDAO {
         
         java.util.Date currentTime = new java.util.Date();
         java.sql.Timestamp currentTimeSql = new java.sql.Timestamp(currentTime.getTime());
-        SimpleDateFormat sdf = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         sdf.setLenient(false);
         Timestamp importTime;
         try {
             //Date parsedDate = sdf.parse(timeStr);
             //importTime = new Timestamp(parsedDate.getTime());
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Thời gian phải đúng định dạng yy/MM/dd HH:mm:ss!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Thời gian phải đúng định dạng yyyy-MM-dd HH:mm:ss!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 

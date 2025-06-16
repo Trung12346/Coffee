@@ -301,10 +301,10 @@ if (ten.isEmpty() || sdt.isEmpty()) {
     boolean isAdded = mmbs.add(ten, sdt, securityCode, rankName, expirationDate);
 
     if (isAdded) {
-    JOptionPane.showMessageDialog(this, "Sign in thanh cong");
+    JOptionPane.showMessageDialog(this, "Dang ky thanh cong");
     loaddata();
     } else {
-    JOptionPane.showMessageDialog(this, "Sign in that bai");
+    JOptionPane.showMessageDialog(this, "Dang ky that bai");
     }
 
 
