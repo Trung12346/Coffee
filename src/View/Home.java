@@ -103,6 +103,11 @@ public class Home extends javax.swing.JFrame {
         });
 
         jButton2.setText("Chấm công");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Tạo đơn");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -119,6 +124,11 @@ public class Home extends javax.swing.JFrame {
         });
 
         jButton5.setText("Xem doanh thu");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jButton6.setText("Voucher");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
@@ -128,8 +138,18 @@ public class Home extends javax.swing.JFrame {
         });
 
         jButton7.setText("Nhập/xuất kho");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         jButton8.setText("Báo cáo");
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
 
         jButton10.setText("Nhân sự");
         jButton10.addActionListener(new java.awt.event.ActionListener() {
@@ -290,6 +310,60 @@ public class Home extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        ChamCong frameChamCong;
+        try {
+            frameChamCong = new ChamCong();
+            frameChamCong.setSize(771, 461);
+            frameChamCong.setLocation(0, 0);
+
+            panel.removeAll();
+            panel.add(frameChamCong, BorderLayout.CENTER);
+            panel.repaint();
+            panel.revalidate();
+        } catch (SQLException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        ViewTransaction frameViewTransaction = new ViewTransaction();
+        frameViewTransaction.setSize(771, 461);
+        frameViewTransaction.setLocation(0, 0);
+
+        panel.removeAll();
+        panel.add(frameViewTransaction, BorderLayout.CENTER);
+        panel.repaint();
+        panel.revalidate();
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+        Warehouse frameWarehouse = new Warehouse();
+        frameWarehouse.setSize(771, 461);
+        frameWarehouse.setLocation(0, 0);
+
+        panel.removeAll();
+        panel.add(frameWarehouse, BorderLayout.CENTER);
+        panel.repaint();
+        panel.revalidate();
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        // TODO add your handling code here:
+        Baocao frameBaocao = new Baocao();
+        frameBaocao.setSize(771, 461);
+        frameBaocao.setLocation(0, 0);
+
+        panel.removeAll();
+        panel.add(frameBaocao, BorderLayout.CENTER);
+        panel.repaint();
+        panel.revalidate();
+    }//GEN-LAST:event_jButton8ActionPerformed
 
     /**
      * @param args the command line arguments

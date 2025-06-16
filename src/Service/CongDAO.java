@@ -20,10 +20,10 @@ public class CongDAO {
         System.out.println(rs.getString("date"));
         stm.executeUpdate(query);
     }
-    public static void main(String[] args) throws SQLException {
-        CongDAO c = new CongDAO();
-        c.addCong(1);
-    }
+//    public static void main(String[] args) throws SQLException {
+//        CongDAO c = new CongDAO();
+//        c.addCong(1);
+//    }
     public void update(int id, boolean cong) throws SQLException{
         String query = "UPDATE cong SET cong=?  where cong_id = ? ";
         PreparedStatement ps = conn.prepareStatement(query);

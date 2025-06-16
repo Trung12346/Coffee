@@ -12,7 +12,7 @@ import java.sql.*;
  *
  * @author ADMIN
  */
-public class ViewTransactionDAO {
+public class ViewTransactionDAO_old {
 
     public ResultSet Loaddata() {
         try {
@@ -47,18 +47,4 @@ public class ViewTransactionDAO {
             return null;
         }
     }
-    public ResultSet fillter(String startdate, String enddate) {
-    try {
-        Connection conn = dbConnection.connect();
-        String query = "SELECT * FROM recipt WHERE CONVERT(date, recipt_date) BETWEEN ? AND ?";
-        PreparedStatement ps = conn.prepareStatement(query);
-        ps.setString(1, startdate); 
-        ps.setString(2, enddate);   
-        return ps.executeQuery();
-    } catch (Exception e) {
-        e.printStackTrace();
-        return null;
-    }
-}
-
 }
