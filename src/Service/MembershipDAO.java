@@ -19,17 +19,16 @@ public class MembershipDAO {
             return null;
         }
     }
-      public boolean add(String membership_name, String phone, String security_code, String rank_name, Timestamp expiration_date) {
+      public boolean add(String membership_name, String phone, String security_code) {
         try {
             Connection conn = dbConnection.connect(); 
-            String query = "INSERT INTO membership (membership_name, phone, sercurity_code, rank_name, expiration_date) VALUES (?, ?, ?, ?, ?)";
+            //String query = "INSERT INTO membership (membership_name, phone, sercurity_code, rank_name, expiration_date) VALUES (?, ?, ?, ?, ?)";
+            String query = "INSERT INTO membership (membership_name, phone, sercurity_code, point) VALUES (?, ?, ?, 0)";
             PreparedStatement ps = conn.prepareStatement(query);
-            System.out.println(rank_name);
+            //System.out.println(rank_name);
             ps.setString(1, membership_name);
             ps.setString(2, phone);
             ps.setString(3, security_code);
-            ps.setString(4, rank_name);
-            ps.setTimestamp(5, expiration_date);
 
             int rows = ps.executeUpdate();
             return rows > 0;

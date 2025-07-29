@@ -10,12 +10,12 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author ADMIN
  */
-public class Warehouse extends javax.swing.JPanel {
+public class Warehouse_old extends javax.swing.JPanel {
 
     /**
      * Creates new form warehouse
      */
-    public Warehouse() {
+    public Warehouse_old() {
         initComponents();
         loadTableData();
     }
@@ -129,7 +129,6 @@ public class Warehouse extends javax.swing.JPanel {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-
     }// </editor-fold>//GEN-END:initComponents
 
     private void btthemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btthemActionPerformed

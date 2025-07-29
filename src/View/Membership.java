@@ -32,6 +32,10 @@ public class Membership extends JPanel {
         initComponentsOverride();
         model = (DefaultTableModel) tblmembership.getModel();
         loaddata();
+//        jComboBox1.setVisible(false);
+//        cbboxexpirday.setVisible(false);
+//        rank.setVisible(false);
+//        jLabel2.setVisible(false);
     }
     public void loaddata(){
         model.setRowCount(0);
@@ -42,8 +46,8 @@ public class Membership extends JPanel {
             rs.getInt("membership_id"),
                 rs.getString("membership_name"),
                 rs.getString("phone"),
-                rs.getTimestamp("expiration_date").toString(),
-                rs.getString("rank_name")
+//                rs.getTimestamp("expiration_date").toString(),
+//                rs.getString("rank_name")
             });
             }
         } catch (Exception e) {
@@ -62,19 +66,13 @@ public class Membership extends JPanel {
         txtten = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         txtsdt = new javax.swing.JTextField();
-        rank = new javax.swing.JLabel();
         btnnsignin = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblmembership = new javax.swing.JTable();
-        jLabel2 = new javax.swing.JLabel();
-        cbboxexpirday = new javax.swing.JComboBox<>();
-        jComboBox1 = new javax.swing.JComboBox<>();
 
         label.setText("Tên");
 
         jLabel1.setText("Số Điện Thoại:");
-
-        rank.setText("Hạng");
 
         btnnsignin.setText("Đăng Ký");
         btnnsignin.addActionListener(new java.awt.event.ActionListener() {
@@ -85,17 +83,17 @@ public class Membership extends JPanel {
 
         tblmembership.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Hội Viên Mã", "Tên Hội viên", "Số Điện Thoại Hội Viên", "Hết Hạn", "Hạng"
+                "Hội Viên Mã", "Tên Hội viên", "Số Điện Thoại Hội Viên"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -103,17 +101,6 @@ public class Membership extends JPanel {
             }
         });
         jScrollPane1.setViewportView(tblmembership);
-
-        jLabel2.setText("Thời Hạn");
-
-        cbboxexpirday.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "3 tháng", "6 tháng", "12 tháng" }));
-        cbboxexpirday.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbboxexpirdayActionPerformed(evt);
-            }
-        });
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Dong", "Bac", "Kim cuong" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -123,18 +110,16 @@ public class Membership extends JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2)
-                    .addComponent(rank)
                     .addComponent(jLabel1)
                     .addComponent(label))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtten)
-                    .addComponent(txtsdt)
-                    .addComponent(cbboxexpirday, 0, 154, Short.MAX_VALUE)
-                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(64, 64, 64)
-                .addComponent(btnnsignin)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(218, 218, 218)
+                        .addComponent(btnnsignin))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(txtsdt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                        .addComponent(txtten, javax.swing.GroupLayout.Alignment.LEADING)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -149,16 +134,8 @@ public class Membership extends JPanel {
                     .addComponent(jLabel1)
                     .addComponent(txtsdt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(rank)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnnsignin))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(cbboxexpirday, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 83, Short.MAX_VALUE)
+                .addComponent(btnnsignin)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 123, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }
@@ -169,21 +146,17 @@ public class Membership extends JPanel {
         txtten = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         txtsdt = new javax.swing.JTextField();
-        rank = new javax.swing.JLabel();
         btnnsignin = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblmembership = new javax.swing.JTable();
-        jLabel2 = new javax.swing.JLabel();
-        cbboxexpirday = new javax.swing.JComboBox<>();
-        jComboBox1 = new javax.swing.JComboBox<>();
 
         label.setText("Tên");
 
         jLabel1.setText("Số Điện Thoại:");
 
-        rank.setText("Hạng");
-
         btnnsignin.setText("Đăng Ký");
+        btnnsignin.setMaximumSize(null);
+        btnnsignin.setPreferredSize(null);
         btnnsignin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnnsigninActionPerformed(evt);
@@ -192,17 +165,17 @@ public class Membership extends JPanel {
 
         tblmembership.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Hội Viên Mã", "Tên Hội viên", "Số Điện Thoại Hội Viên", "Hết Hạn", "Hạng"
+                "Hội Viên Mã", "Tên Hội viên", "Số Điện Thoại Hội Viên"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -211,38 +184,25 @@ public class Membership extends JPanel {
         });
         jScrollPane1.setViewportView(tblmembership);
 
-        jLabel2.setText("Thời Hạn");
-
-        cbboxexpirday.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "3 tháng", "6 tháng", "12 tháng" }));
-        cbboxexpirday.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbboxexpirdayActionPerformed(evt);
-            }
-        });
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Dong", "Bac", "Kim cuong" }));
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
             .addGroup(layout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2)
-                    .addComponent(rank)
                     .addComponent(jLabel1)
                     .addComponent(label))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtten)
-                    .addComponent(txtsdt)
-                    .addComponent(cbboxexpirday, 0, 154, Short.MAX_VALUE)
-                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(64, 64, 64)
-                .addComponent(btnnsignin)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(txtsdt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                        .addComponent(txtten, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(218, 218, 218)
+                        .addComponent(btnnsignin, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(241, 241, 241))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -250,29 +210,17 @@ public class Membership extends JPanel {
                 .addGap(46, 46, 46)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(label)
-                    .addComponent(txtten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtten))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(txtsdt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtsdt))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(rank)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnnsignin))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(cbboxexpirday, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 83, Short.MAX_VALUE)
+                .addComponent(btnnsignin, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(110, 110, 110)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void cbboxexpirdayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbboxexpirdayActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbboxexpirdayActionPerformed
 
     private void btnnsigninActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnnsigninActionPerformed
         // TODO add your handling code here:
@@ -285,21 +233,21 @@ if (ten.isEmpty() || sdt.isEmpty()) {
     return;
 }
 
-    String thoiHanSelected = (String) cbboxexpirday.getSelectedItem();
-    int monthsToAdd = Integer.parseInt(thoiHanSelected.split(" ")[0]);
+//    String thoiHanSelected = (String) cbboxexpirday.getSelectedItem();
+//    int monthsToAdd = Integer.parseInt(thoiHanSelected.split(" ")[0]);
 
-    ngayhethan = ngayhientai.plusMonths(monthsToAdd);
+//    ngayhethan = ngayhientai.plusMonths(monthsToAdd);
 
     String securityCode = "MB" + String.format("%02d", (int)(Math.random() * 100));
 
-    LocalDateTime localDateTime = ngayhethan.atStartOfDay();
-    Timestamp expirationDate = Timestamp.valueOf(localDateTime.atZone(ZoneId.systemDefault()).toLocalDateTime());
-
-    String rankName = (String) jComboBox1.getSelectedItem();
+//    LocalDateTime localDateTime = ngayhethan.atStartOfDay();
+//    Timestamp expirationDate = Timestamp.valueOf(localDateTime.atZone(ZoneId.systemDefault()).toLocalDateTime());
+//
+//    String rankName = (String) jComboBox1.getSelectedItem();
 
     MembershipDAO mmbs = new MembershipDAO();
-    boolean isAdded = mmbs.add(ten, sdt, securityCode, rankName, expirationDate);
-
+    //boolean isAdded = mmbs.add(ten, sdt, securityCode, rankName, expirationDate);
+    boolean isAdded = mmbs.add(ten, sdt, securityCode);
     if (isAdded) {
     JOptionPane.showMessageDialog(this, "Dang ky thanh cong");
     loaddata();
@@ -348,13 +296,9 @@ if (ten.isEmpty() || sdt.isEmpty()) {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnnsignin;
-    private javax.swing.JComboBox<String> cbboxexpirday;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel label;
-    private javax.swing.JLabel rank;
     private javax.swing.JTable tblmembership;
     private javax.swing.JTextField txtsdt;
     private javax.swing.JTextField txtten;

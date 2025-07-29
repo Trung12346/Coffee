@@ -26,7 +26,13 @@ import Model.MembershipDataSet;
 import Model.Recipt;
 import Model.ReciptRow;
 import Service.GlobalVariables;
+import com.itextpdf.kernel.geom.PageSize;
 import java.util.HashSet;
+import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.layout.*;
+import com.itextpdf.layout.element.Paragraph;
+import java.io.FileNotFoundException;
+
 
 /**
  *
@@ -74,7 +80,7 @@ public class CreateTransaction extends javax.swing.JPanel {
         });
     }
 
-    public String requestRecipt() throws JsonProcessingException, SQLException {
+    public String requestRecipt() throws JsonProcessingException, SQLException, FileNotFoundException {
         ArrayList<Integer> productIds = new ArrayList();
         ArrayList quantities = new ArrayList();
         ArrayList<ProductDataSet> products = new ArrayList();
@@ -131,28 +137,33 @@ public class CreateTransaction extends javax.swing.JPanel {
         
         float membershipDiscount = 0;
         try {
-            JSONObject jo = JSON.parseJSON(transactDAO.searchMembership(jTextField1.getText(), true));
-            if(jo.getString("securityCode").equals(jTextField2.getText())) {
+            JSONObject jo = JSON.parseJSON(transactDAO.searchMembership(jTextField1.getText()));
+            //if(jo.getString("securityCode").equals(jTextField2.getText())) {
                 mds = new MembershipDataSet(
                     jo.getInt("id"),
                     jo.getString("name"),
                     jo.getString("phone"),
                     jo.getString("securityCode"),
-                    jo.getString("rank"),
-                    new java.sql.Date(jo.getInt("expirDate")),
-                    jo.getFloat("discount")
+                    jo.getInt("point")
                 );
-                membershipDiscount = jo.getFloat("discount");
-            }
+                if(jCheckBox1.isSelected()) {
+                    membershipDiscount = jo.getInt("point");
+                }
+                
+            //}
             
-        } catch (NullPointerException ex) {}
-
+        } catch (NullPointerException ex) {System.out.println("found none");}
+        System.out.println("HEY");
+        System.out.println(mds.id);
         TransactionDataSet transaction = new TransactionDataSet(
                 currentTimeSql,
                 products,
                 vouchers,
                 mds,
-                GlobalVariables.userId
+                GlobalVariables.userId,
+                0,
+                jCheckBox1.isSelected(),
+                0
         );
 
         java.util.Date utilDate = new java.util.Date(transaction.reciptDate.getTime());
@@ -195,10 +206,20 @@ public class CreateTransaction extends javax.swing.JPanel {
             float productTotalAfterVoucher = productPrice * product.quantity;
             total += productTotal;
             totalAfterVoucher += productTotalAfterVoucher;
-            rr.setParams(product.productName + " x" + String.valueOf(product.quantity), String.valueOf(productTotal));
+            rr.setParams(product.productName + " x" + String.valueOf(product.quantity), String.valueOf(product.productPrice));
             r.addReciptRow(rr.row);
         }
-        totalAfterVoucher = (totalAfterVoucher / 100) * (100 - membershipDiscount);
+        System.out.println("md");
+        System.out.println(membershipDiscount);
+        float initialDiscount = membershipDiscount;
+        if(membershipDiscount > totalAfterVoucher) {
+            membershipDiscount = totalAfterVoucher;
+            totalAfterVoucher = 0;
+            
+        } else {
+            totalAfterVoucher -= membershipDiscount;
+        }
+        transaction.replenishPoint = initialDiscount - membershipDiscount;
         rr.setParams("", "");
         r.addReciptRow(rr.row);
         rr.setParams("Discount:", "-" + String.valueOf(total - totalAfterVoucher));
@@ -207,7 +228,15 @@ public class CreateTransaction extends javax.swing.JPanel {
         r.addReciptRow(rr.row);
         jTextArea1.setText(r.getRecipt());
         System.out.println(r.getRecipt());
-
+        
+        PdfWriter pdfw = new PdfWriter("Receipt.pdf");
+        PdfDocument pdfd = new PdfDocument(pdfw);
+        pdfd.setDefaultPageSize(PageSize.A4);
+        Document d = new Document(pdfd);
+        d.add(new Paragraph(r.getRecipt()));
+        d.close();
+        
+        transaction.total = total;
 //        java.util.Date test = new java.util.Date(currentTimeSql.getTime());
 //        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 //        System.out.println(sdf.format(test));
@@ -238,8 +267,7 @@ public class CreateTransaction extends javax.swing.JPanel {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        jCheckBox1 = new javax.swing.JCheckBox();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -335,7 +363,7 @@ public class CreateTransaction extends javax.swing.JPanel {
             }
         });
 
-        jLabel4.setText("Code");
+        jCheckBox1.setText("Sử dụng điểm");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -343,7 +371,7 @@ public class CreateTransaction extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(17, 17, 17)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(jButton3)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -354,20 +382,15 @@ public class CreateTransaction extends javax.swing.JPanel {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 666, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton1)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel4)
-                                        .addGap(59, 59, 59))
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jButton1))
-                        .addGap(64, 64, 64)
+                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jCheckBox1)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 99, Short.MAX_VALUE)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -389,14 +412,12 @@ public class CreateTransaction extends javax.swing.JPanel {
                 .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jCheckBox1))
+                        .addGap(28, 28, 28)
                         .addComponent(jButton1))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 179, Short.MAX_VALUE))
@@ -444,11 +465,11 @@ public class CreateTransaction extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String phone = jTextField1.getText().trim();
-        String sc = jTextField2.getText();
+        //String sc = jTextField2.getText();
         try {
             // TODO add your handling code here:
             transactDAO.createTransaction(requestRecipt());
-        } catch (JsonProcessingException | SQLException ex) {
+        } catch (JsonProcessingException | SQLException | FileNotFoundException ex) {
             Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -496,10 +517,10 @@ public class CreateTransaction extends javax.swing.JPanel {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -509,6 +530,5 @@ public class CreateTransaction extends javax.swing.JPanel {
     private javax.swing.JTable jTable2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 }

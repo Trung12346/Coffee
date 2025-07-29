@@ -17,7 +17,7 @@ public class ViewTransactionDAO {
     public ResultSet Loaddata() {
         try {
             Connection conn = dbConnection.connect();
-            String query = "SELECT * FROM recipt";
+            String query = "SELECT * FROM receipt";
             PreparedStatement stmt = conn.prepareStatement(query);
             return stmt.executeQuery();
         } catch (Exception e) {
@@ -50,7 +50,7 @@ public class ViewTransactionDAO {
     public ResultSet fillter(String startdate, String enddate) {
     try {
         Connection conn = dbConnection.connect();
-        String query = "SELECT * FROM recipt WHERE CONVERT(date, recipt_date) BETWEEN ? AND ?";
+        String query = "SELECT * FROM receipt WHERE CONVERT(date, recipt_date) BETWEEN ? AND ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, startdate); 
         ps.setString(2, enddate);   
