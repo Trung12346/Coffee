@@ -35,9 +35,9 @@ public class ChamCong extends javax.swing.JPanel {
      * Creates new form ChamCong
      */
     public ChamCong() throws SQLException {
-      initComponents();
+        initComponents();
         model = (DefaultTableModel) tablecong.getModel();
-        displayData();
+
         ArrayList<Integer> staffIds = stdao.getStaffIds();
         ArrayList<Integer> todayCongIds = cdao.getTodayCongIds();
         staffIds.forEach(id -> {
@@ -50,70 +50,75 @@ public class ChamCong extends javax.swing.JPanel {
                 }
             }
         });
+        displayData();
     }
 
     private void displayData() throws SQLException {
-         model.setRowCount(0);
-    ResultSet rs = cdao.getTodayCong();
-    try {
-        while (rs.next()) {
-    int showsUp = rs.getInt("shows_up");
-    String trangThai;
-    switch (showsUp) {
-        case 0 -> trangThai = "Vắng";
-        case 1 -> trangThai = "Đi muộn";
-        case 2 -> trangThai = "Có mặt";
-        default -> trangThai = "Không xác định";
+        model.setRowCount(0);
+        ResultSet rs = cdao.getTodayCong();
+        try {
+            while (rs.next()) {
+                int showsUp = rs.getInt("shows_up");
+                String trangThai;
+                switch (showsUp) {
+                    case 0 ->
+                        trangThai = "Vắng";
+                    case 1 ->
+                        trangThai = "Đi muộn";
+                    case 2 ->
+                        trangThai = "Có mặt";
+                    default ->
+                        trangThai = "Không xác định";
+                }
+
+                model.addRow(new Object[]{
+                    rs.getInt("cong_id"),
+                    rs.getInt("staff_id"),
+                    rs.getString("staff_name"),
+                    rs.getDate("date"),
+                    rs.getTime("show_up_time"),
+                    rs.getTime("shift_start") + "-" + rs.getTime("shift_end"),
+                    trangThai
+                });
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi hiển thị dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    model.addRow(new Object[] {
-        rs.getInt("cong_id"),
-        rs.getInt("staff_id"),
-        rs.getString("staff_name"),
-        rs.getDate("date"),
-        rs.getTime("show_up_time"),
-        rs.getTime("shift_start") + "-" + rs.getTime("shift_end"),
-        trangThai  
-    });
-}
-    } catch (SQLException e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Lỗi khi hiển thị dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-    }
-    }
     private void handleAssignShift(int ca) {
-    int row = tablecong.getSelectedRow();
-    if (row == -1) {
-        JOptionPane.showMessageDialog(this, "Hãy chọn một nhân viên để phân ca.");
-        return;
-    }
-
-    int congId = (int) model.getValueAt(row, 0);
-
-    Time shiftStart, shiftEnd;
-    if (ca == 1) {
-        shiftStart = Time.valueOf("06:00:00");
-        shiftEnd = Time.valueOf("11:00:00");
-    } else {
-        shiftStart = Time.valueOf("11:00:00");
-        shiftEnd = Time.valueOf("17:00:00");
-    }
-
-    try {
-        if (cdao.isShiftTaken(shiftStart, shiftEnd)) {
-            JOptionPane.showMessageDialog(this, "Ca này đã có người làm rồi.");
+        int row = tablecong.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Hãy chọn một nhân viên để phân ca.");
             return;
         }
 
-        cdao.updateShift(congId, shiftStart, shiftEnd);
-        model.setValueAt(shiftStart.toString() + " - " + shiftEnd.toString(), row, 5); // cột "ca làm"
-        JOptionPane.showMessageDialog(this, "Phân ca thành công");
-    } catch (SQLException ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Lỗi khi phân ca: " + ex.getMessage());
-    }
-}
+        int congId = (int) model.getValueAt(row, 0);
 
+        Time shiftStart, shiftEnd;
+        if (ca == 1) {
+            shiftStart = Time.valueOf("06:00:00");
+            shiftEnd = Time.valueOf("11:00:00");
+        } else {
+            shiftStart = Time.valueOf("11:00:00");
+            shiftEnd = Time.valueOf("17:00:00");
+        }
+
+        try {
+            if (cdao.isShiftTaken(shiftStart, shiftEnd)) {
+                JOptionPane.showMessageDialog(this, "Ca này đã có người làm rồi.");
+                return;
+            }
+
+            cdao.updateShift(congId, shiftStart, shiftEnd);
+            model.setValueAt(shiftStart.toString() + " - " + shiftEnd.toString(), row, 5); // cột "ca làm"
+            JOptionPane.showMessageDialog(this, "Phân ca thành công");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi phân ca: " + ex.getMessage());
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -205,177 +210,178 @@ public class ChamCong extends javax.swing.JPanel {
                 .addContainerGap(80, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-private void ganCa(String caLam) {
-    int row = tablecong.getSelectedRow();
-    if (row == -1) {
-        JOptionPane.showMessageDialog(null, "Hãy chọn một dòng trong bảng.");
-        return;
+    private void ganCa(String caLam) {
+        int row = tablecong.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(null, "Hãy chọn một dòng trong bảng.");
+            return;
+        }
+
+        tablecong.setValueAt(caLam, row, 7);
+
+        String[] parts = caLam.split("-");
+        if (parts.length != 2) {
+            JOptionPane.showMessageDialog(null, "Định dạng ca làm không hợp lệ.");
+            return;
+        }
+
+        String shiftStart = parts[0];
+        String shiftEnd = parts[1];
+
+        String congId = tablecong.getValueAt(row, 0).toString();
+
+        try {
+            Connection conn = dbConnection.connect();
+            PreparedStatement stmt = conn.prepareStatement("UPDATE cong SET shift_start = ?, shift_end = ? WHERE cong_id = ?");
+            stmt.setTime(1, Time.valueOf(shiftStart));
+            stmt.setTime(2, Time.valueOf(shiftEnd));
+            stmt.setString(3, congId);
+            stmt.executeUpdate();
+            conn.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi cập nhật database.");
+        }
     }
 
-    tablecong.setValueAt(caLam, row, 7);
+    private void tablecongMouseClicked(java.awt.event.MouseEvent evt) {
+        int row = tablecong.getSelectedRow();
+        int column = tablecong.getSelectedColumn();
 
-    String[] parts = caLam.split("-");
-    if (parts.length != 2) {
-        JOptionPane.showMessageDialog(null, "Định dạng ca làm không hợp lệ.");
-        return;
-    }
+        //Validate
+        if (column == 7) {
+            String caLam = tablecong.getValueAt(row, 5).toString();
 
-    String shiftStart = parts[0];
-    String shiftEnd = parts[1];
-
-    String congId = tablecong.getValueAt(row, 0).toString();
-
-    try {
-        Connection conn = dbConnection.connect();
-        PreparedStatement stmt = conn.prepareStatement("UPDATE cong SET shift_start = ?, shift_end = ? WHERE cong_id = ?");
-        stmt.setTime(1, Time.valueOf(shiftStart));
-        stmt.setTime(2, Time.valueOf(shiftEnd));
-        stmt.setString(3, congId);
-        stmt.executeUpdate();
-        conn.close();
-    } catch (Exception ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Lỗi cập nhật database.");
-    }
-}
-    private void tablecongMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablecongMouseClicked
-int row = tablecong.getSelectedRow();
-    int column = tablecong.getSelectedColumn();
-
-    //Validate
-    if (column == 7) {
-    String caLam = tablecong.getValueAt(row, 5).toString();
-
-    //null 
-    if (caLam == null || !caLam.contains("-")) {
-        JOptionPane.showMessageDialog(null, "Vui lòng phân ca trước khi chấm công.");
-        tablecong.setValueAt(false, row, 7);
-        return;
-    }
-
-    Object showUpTime = tablecong.getValueAt(row, 4);
-    if (showUpTime != null && !showUpTime.toString().equals("")) {
-        JOptionPane.showMessageDialog(null, "Bạn đã chấm công ca này rồi. Không thể chấm lại.");
-        tablecong.setValueAt(false, row, 7);
-        return;
-    }
-
-    //trung ca 
-    for (int i = 0; i < tablecong.getRowCount(); i++) {
-        if (i != row) {
-            Object caKhac = tablecong.getValueAt(i, 5);
-            Object daCham = tablecong.getValueAt(i, 4);
-
-            if (caKhac != null && daCham != null && caLam.equals(caKhac.toString())) {
-                JOptionPane.showMessageDialog(null, "Ca làm này đã có người chấm công.");
+            //null 
+            if (caLam == null || !caLam.contains("-")) {
+                JOptionPane.showMessageDialog(null, "Vui lòng phân ca trước khi chấm công.");
                 tablecong.setValueAt(false, row, 7);
                 return;
             }
+
+            Object showUpTime = tablecong.getValueAt(row, 4);
+            if (showUpTime != null && !showUpTime.toString().equals("")) {
+                JOptionPane.showMessageDialog(null, "Bạn đã chấm công ca này rồi. Không thể chấm lại.");
+                tablecong.setValueAt(false, row, 7);
+                return;
+            }
+
+            //trung ca 
+            for (int i = 0; i < tablecong.getRowCount(); i++) {
+                if (i != row) {
+                    Object caKhac = tablecong.getValueAt(i, 5);
+                    Object daCham = tablecong.getValueAt(i, 4);
+
+                    if (caKhac != null && daCham != null && caLam.equals(caKhac.toString())) {
+                        JOptionPane.showMessageDialog(null, "Ca làm này đã có người chấm công.");
+                        tablecong.setValueAt(false, row, 7);
+                        return;
+                    }
+                }
+            }
+
+            LocalTime now = LocalTime.now();
+
+            if (caLam == null || caLam.trim().isEmpty() || caLam.equals("null") || !caLam.contains("-")) {
+                JOptionPane.showMessageDialog(null, "Vui lòng chọn ca làm trước khi chấm công.");
+                return;
+            }
+
+            String[] parts = caLam.split("-");
+            if (parts.length != 2) {
+                JOptionPane.showMessageDialog(null, "Định dạng ca làm không hợp lệ.");
+                return;
+            }
+
+            LocalTime batDau;
+            try {
+                batDau = LocalTime.parse(parts[0].trim());
+            } catch (DateTimeParseException e) {
+                JOptionPane.showMessageDialog(null, "Thời gian bắt đầu ca làm không hợp lệ.");
+                return;
+            }
+
+            long delayInMinutes = Duration.between(batDau, now).toMinutes();
+
+            int showsUp;
+            if (now.isBefore(batDau)) {
+                showsUp = 1;
+            } else if (delayInMinutes <= 5) {
+                showsUp = 2;
+            } else {
+                showsUp = 1;
+            }
+
+            int congId = (int) tablecong.getValueAt(row, 0);
+            cdao.updateShowsUp(congId, now, showsUp);
+
+            // Cập nhật lại bảng (nếu muốn)
+            tablecong.setValueAt(now.toString(), row, 4); // thoi gian co mat
+            tablecong.setValueAt(showsUp == 2 ? "Đúng giờ" : "Đi muộn", row, 6); // trạng thái
         }
-    }
-
-    LocalTime now = LocalTime.now();
-
-if (caLam == null || caLam.trim().isEmpty() || caLam.equals("null") || !caLam.contains("-")) {
-    JOptionPane.showMessageDialog(null, "Vui lòng chọn ca làm trước khi chấm công.");
-    return;
-}
-
-String[] parts = caLam.split("-");
-if (parts.length != 2) {
-    JOptionPane.showMessageDialog(null, "Định dạng ca làm không hợp lệ.");
-    return;
-}
-
-LocalTime batDau;
-try {
-    batDau = LocalTime.parse(parts[0].trim());
-} catch (DateTimeParseException e) {
-    JOptionPane.showMessageDialog(null, "Thời gian bắt đầu ca làm không hợp lệ.");
-    return;
-}
-
-        long delayInMinutes = Duration.between(batDau, now).toMinutes();
-
-        int showsUp;
-        if (now.isBefore(batDau)) {
-            showsUp = 1; 
-        } else if (delayInMinutes <= 5) {
-            showsUp = 2; 
-        } else {
-            showsUp = 1;
-        }
-
-        int congId = (int) tablecong.getValueAt(row, 0);
-        cdao.updateShowsUp(congId, now, showsUp);
-
-        // Cập nhật lại bảng (nếu muốn)
-        tablecong.setValueAt(now.toString(), row, 4); // thoi gian co mat
-        tablecong.setValueAt(showsUp == 2 ? "Đúng giờ" : "Đi muộn", row, 6); // trạng thái
-    }
     }
 
     private void btnCa1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCa1ActionPerformed
-       int row = tablecong.getSelectedRow();
-    if (row == -1) {
-        JOptionPane.showMessageDialog(null, "Hãy chọn một dòng.");
-        return;
-    }
+        int row = tablecong.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(null, "Hãy chọn một dòng.");
+            return;
+        }
 
-    String caLam = "06:00:00-11:00:00";
-    tablecong.setValueAt(caLam, row, 7); 
+        String caLam = "06:00:00-11:00:00";
+        tablecong.setValueAt(caLam, row, 7);
 
-    String[] parts = caLam.split("-");
-    String shiftStart = parts[0];
-    String shiftEnd = parts[1];
-    String congId = tablecong.getValueAt(row, 0).toString(); 
+        String[] parts = caLam.split("-");
+        String shiftStart = parts[0];
+        String shiftEnd = parts[1];
+        String congId = tablecong.getValueAt(row, 0).toString();
 
-    try {
-        Connection conn = dbConnection.connect();
-        PreparedStatement stmt = conn.prepareStatement(
-            "UPDATE cong SET shift_start = ?, shift_end = ? WHERE cong_id = ?"
-        );
-        stmt.setTime(1, Time.valueOf(shiftStart));
-        stmt.setTime(2, Time.valueOf(shiftEnd));
-        stmt.setString(3, congId);
-        stmt.executeUpdate();
-        displayData();
-        conn.close();
-    } catch (Exception ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Lỗi cập nhật Ca 1.");
-    }
+        try {
+            Connection conn = dbConnection.connect();
+            PreparedStatement stmt = conn.prepareStatement(
+                    "UPDATE cong SET shift_start = ?, shift_end = ? WHERE cong_id = ?"
+            );
+            stmt.setTime(1, Time.valueOf(shiftStart));
+            stmt.setTime(2, Time.valueOf(shiftEnd));
+            stmt.setString(3, congId);
+            stmt.executeUpdate();
+            displayData();
+            conn.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi cập nhật Ca 1.");
+        }
     }//GEN-LAST:event_btnCa1ActionPerformed
 
     private void btnCa2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCa2ActionPerformed
- int row = tablecong.getSelectedRow();
-    if (row == -1) {
-        JOptionPane.showMessageDialog(null, "Hãy chọn một dòng.");
-        return;
-    }
+        int row = tablecong.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(null, "Hãy chọn một dòng.");
+            return;
+        }
 
-    String caLam = "13:00:00-17:00:00";
-    tablecong.setValueAt(caLam, row, 7);
+        String caLam = "13:00:00-17:00:00";
+        tablecong.setValueAt(caLam, row, 7);
 
-    String[] parts = caLam.split("-");
-    String shiftStart = parts[0];
-    String shiftEnd = parts[1];
-    String congId = tablecong.getValueAt(row, 0).toString();
+        String[] parts = caLam.split("-");
+        String shiftStart = parts[0];
+        String shiftEnd = parts[1];
+        String congId = tablecong.getValueAt(row, 0).toString();
 
-    try {
-        Connection conn = dbConnection.connect();
-        PreparedStatement stmt = conn.prepareStatement(
-            "UPDATE cong SET shift_start = ?, shift_end = ? WHERE cong_id = ?"
-        );
-        stmt.setTime(1, Time.valueOf(shiftStart));
-        stmt.setTime(2, Time.valueOf(shiftEnd));
-        stmt.setString(3, congId);
-        stmt.executeUpdate();
-        displayData();
-        conn.close();
-    } catch (Exception ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Lỗi cập nhật Ca 2.");
+        try {
+            Connection conn = dbConnection.connect();
+            PreparedStatement stmt = conn.prepareStatement(
+                    "UPDATE cong SET shift_start = ?, shift_end = ? WHERE cong_id = ?"
+            );
+            stmt.setTime(1, Time.valueOf(shiftStart));
+            stmt.setTime(2, Time.valueOf(shiftEnd));
+            stmt.setString(3, congId);
+            stmt.executeUpdate();
+            displayData();
+            conn.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi cập nhật Ca 2.");
     }    }//GEN-LAST:event_btnCa2ActionPerformed
 
     /**

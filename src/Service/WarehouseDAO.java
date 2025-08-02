@@ -4,6 +4,7 @@
  */
 package Service;
 
+import Model.STable1;
 import Service.dbConnection;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -16,7 +17,20 @@ import javax.swing.table.DefaultTableModel;
 public class WarehouseDAO {
 
     // Thêm sản phẩm vào bảng warehouse_log
-    public boolean addWarehouseLog(String object, String quantityStr, int staffId) {
+    public static ArrayList<STable1> getIngredients() throws SQLException {
+        Connection conn = dbConnection.connect();
+        String query = "SELECT * FROM ingredients";
+        Statement stm = conn.createStatement();
+        ResultSet rs = stm.executeQuery(query);
+        ArrayList<STable1> table_1Rows = new ArrayList();
+        while(rs.next()) {
+            table_1Rows.add(new STable1(rs.getInt("ingredient_id"), rs.getString("ingredient_label")));
+        }
+        
+        return table_1Rows;
+    }
+    
+    public boolean addWarehouseLog(String object, String quantityStr) {
         if (object.isEmpty() || quantityStr.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -47,12 +61,11 @@ public class WarehouseDAO {
             return false;
         }
 
-        String sql = "INSERT INTO warehouse_log (object, quantity, import_time, staff_id) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO storage VALUES (CURRENT_TIMESTAMP, ?, ?)";
         try (Connection conn = dbConnection.connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, object);
             pstmt.setInt(2, quantity);
-            pstmt.setTimestamp(3, currentTimeSql);
-            pstmt.setInt(4, staffId);
+
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {

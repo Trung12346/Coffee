@@ -30,6 +30,7 @@ public class Home extends javax.swing.JFrame {
         jButton6.setEnabled(false);
         jButton7.setEnabled(false);
         jButton8.setEnabled(false);
+        jButton9.setEnabled(false);
         jButton10.setEnabled(false);
         panel.setLayout(new GridLayout(0, 1));
 
@@ -42,6 +43,7 @@ public class Home extends javax.swing.JFrame {
             jButton6.setEnabled(true);
             jButton7.setEnabled(true);
             jButton8.setEnabled(true);
+            jButton9.setEnabled(true);
             jButton10.setEnabled(true);
         }
         if (GlobalVariables.args.contains("+cong")) {
@@ -71,6 +73,7 @@ public class Home extends javax.swing.JFrame {
         if (GlobalVariables.args.contains("+warehouseLog")) {
             jButton7.setEnabled(true);
         }
+        
         jButton8.setVisible(false);
     }
 
