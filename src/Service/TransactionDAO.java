@@ -8,12 +8,16 @@ import java.sql.*;
 import Model.MembershipDataSet;
 import Model.JSON;
 import Model.ProductDataSet;
+import Model.RMTable1;
 import Model.VoucherDataSet;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -191,7 +195,7 @@ public class TransactionDAO {
         java.util.Date utilDate = new java.util.Date(new java.sql.Timestamp(jo.getLong("reciptDate")).getTime());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateTime = sdf.format(utilDate);
-        
+
         System.out.println(dateTime);
 //        String query = String.format("INSERT INTO recipt VALUES ('%s', '%s', '%s', %d, %d)",
 //                dateTime,
@@ -233,26 +237,68 @@ public class TransactionDAO {
         }
         System.out.println("membershipid");
         System.out.println(membershipId);
-        if(membershipId != 0) {
+        if (membershipId != 0) {
             Calendar c = Calendar.getInstance();
             c.setTime(utilDate);
             c.add(Calendar.DATE, 60);
             utilDate = c.getTime();
-            if(Boolean.parseBoolean(jo.get("usePoint").toString())) {
+            if (Boolean.parseBoolean(jo.get("usePoint").toString())) {
                 query = String.format("INSERT INTO point_history (membership_id, change_type, point_change, expiration_date) VALUES (%d, -1, NULL, '%s')", membershipId, sdf.format(utilDate));
                 stm = conn.createStatement();
                 stm.executeUpdate(query);
             }
-            
+
             double point = Math.floor(Float.parseFloat(jo.get("total").toString()) / 10);
 
             c.add(Calendar.SECOND, 1);
             utilDate = c.getTime();
-            
+
             query = String.format("INSERT INTO point_history (membership_id, change_type, point_change, expiration_date) VALUES (%d, 1, %d, '%s'), (%d, 1, %d, '%s')",
-                    membershipId, (int)point, sdf.format(utilDate),
-                    membershipId, (int)Float.parseFloat(jo.get("replenishPoint").toString()), sdf.format(utilDate));
+                    membershipId, (int) point, sdf.format(utilDate),
+                    membershipId, (int) Float.parseFloat(jo.get("replenishPoint").toString()), sdf.format(utilDate));
             System.out.println(query);
+            stm = conn.createStatement();
+            stm.executeUpdate(query);
+        }
+    }
+
+    public int howManyCraftable(int productId) {
+        String query_1 = String.format("SELECT rd.ingredient_id, ready_quantity, quantity FROM (SELECT ingredient_id, SUM(quantity) AS ready_quantity FROM (SELECT product_id, p_i.ingredient_id, ingredient_label, quantity AS r_quantity, unit FROM (SELECT * FROM product_ingredients WHERE product_id = %d) p_i INNER JOIN ingredients i ON p_i.ingredient_id = i.ingredient_id) nd INNER JOIN storage ON storage.item = nd.ingredient_id GROUP BY ingredient_id) AS rd INNER JOIN product_ingredients ON rd.ingredient_id = product_ingredients.ingredient_id", productId);
+        System.out.println(query_1);
+        Statement stm_1;
+        int smallestAcquirable = -1;
+        try {
+            stm_1 = conn.createStatement();
+            ResultSet rs_1 = stm_1.executeQuery(query_1);
+
+            while (rs_1.next()) {
+                float availableQuantity = rs_1.getFloat("ready_quantity");
+                float neededQuantity = rs_1.getFloat("quantity");
+                int doable = (int) Math.floor(availableQuantity / neededQuantity);
+                if (smallestAcquirable < 0) {
+                    smallestAcquirable = doable;
+                }
+                if (smallestAcquirable > doable) {
+                    smallestAcquirable = doable;
+                }
+
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(IngredientDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return smallestAcquirable;
+    }
+
+    public void consumeMaterial(int productId, int quantity) throws SQLException {
+        Locale.setDefault(Locale.US);
+        Statement stm;
+
+        String query = String.format("SELECT product_id, rd.ingredient_id, ready_quantity, quantity FROM (SELECT ingredient_id, SUM(quantity) AS ready_quantity FROM (SELECT product_id, p_i.ingredient_id, ingredient_label, quantity AS r_quantity, unit FROM (SELECT * FROM product_ingredients WHERE product_id = %d) p_i INNER JOIN ingredients i ON p_i.ingredient_id = i.ingredient_id) nd INNER JOIN storage ON storage.item = nd.ingredient_id GROUP BY ingredient_id) AS rd INNER JOIN product_ingredients ON rd.ingredient_id = product_ingredients.ingredient_id", productId);
+        stm = conn.createStatement();
+        ResultSet rs = stm.executeQuery(query);
+        while (rs.next()) {
+            query = String.format("INSERT INTO storage VALUES (CURRENT_TIMESTAMP, %d, %f)", rs.getInt("ingredient_id"), 0 - (quantity * rs.getFloat("quantity")));
             stm = conn.createStatement();
             stm.executeUpdate(query);
         }

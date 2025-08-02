@@ -22,6 +22,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
@@ -31,7 +32,7 @@ import javax.swing.table.TableColumn;
  *
  * @author maith
  */
-public class RecipeManagement extends javax.swing.JFrame {
+public class RecipeManagement extends javax.swing.JPanel {
 
     DefaultTableModel model_2;
     DefaultTableModel model_1;
@@ -75,13 +76,13 @@ public class RecipeManagement extends javax.swing.JFrame {
 //                System.out.println("New   : " + tcl.getNewValue());
                 if (tcl.getColumn() == 1) {
                     table_2Rows.get(tcl.getRow()).quantity = (float) tcl.getNewValue();
-                } else if(tcl.getColumn() == 0) {
+                } else if (tcl.getColumn() == 0) {
                     IngredientDataSet ids = searchIngredient((String) tcl.getNewValue());
                     if (ids != null) {
                         model_2.setValueAt(ids.unit, (int) tcl.getRow(), 2);
                     }
                     table_2Rows.get((int) tcl.getRow()).label = (String) tcl.getNewValue();
-                } else if(tcl.getColumn() == 2) {
+                } else if (tcl.getColumn() == 2) {
                     table_2Rows.get((int) tcl.getRow()).unit = (String) model_2.getValueAt((int) tcl.getRow(), 2);
                 }
             }
@@ -157,7 +158,7 @@ public class RecipeManagement extends javax.swing.JFrame {
 );
         jScrollPane4.setViewportView(jTable2);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         table_1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -243,8 +244,8 @@ public class RecipeManagement extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -281,7 +282,7 @@ public class RecipeManagement extends javax.swing.JFrame {
                 .addContainerGap(55, Short.MAX_VALUE))
         );
 
-        pack();
+        //pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -308,20 +309,45 @@ public class RecipeManagement extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        table_2Rows.forEach(row -> {
-            try {
-                if (row.id > 0) {
+        try {
+            for (int i = 0; i < table_2Rows.size(); i++) {
+                RMTable2 row = table_2Rows.get(i);
+                if (row.id == 0) {
+                    if (row.quantity <= 0 || row.label.equals("???")) {
+                        throw new Exception("invalid input");
+                    }
+                    for (int x = 0; x < table_2Rows.size(); x++) {
+                        RMTable2 r = table_2Rows.get(x);
+                        if (r.id > 0) {
+                            if (row.label.equals(r.label)) {
+                                throw new Exception("duplicated");
+                            }
+                        }
 
-                    updateRecipe(selectedProduct, row.id, row.quantity, row.unit);
-                    loadTable_1(getProducts());
-
-                } else {
-                    addProductIngredient(selectedProduct, row.quantity, row.label, row.unit);
+                    }
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(RecipeManagement.class.getName()).log(Level.SEVERE, null, ex);
             }
-        });
+            System.out.println("must not run");
+            table_2Rows.forEach(row -> {
+                try {
+                    if (row.id > 0) {
+
+                        updateRecipe(selectedProduct, row.id, row.quantity, row.unit);
+                        
+
+                    } else {
+                        addProductIngredient(selectedProduct, row.quantity, row.label, row.unit);
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(RecipeManagement.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            loadTable_1(getProducts());
+        } catch (Exception ex) {
+            System.out.println(ex);
+            JOptionPane.showMessageDialog(this, "khong hop le");
+        }
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void table_2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_table_2MouseClicked

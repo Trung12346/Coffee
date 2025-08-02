@@ -14,17 +14,23 @@ import java.sql.*;
  */
 public class ViewTransactionDAO {
 
-    public ResultSet Loaddata() {
-        try {
-            Connection conn = dbConnection.connect();
-            String query = "SELECT * FROM receipt";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            return stmt.executeQuery();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+   public ResultSet Loaddata() {
+    try {
+        Connection conn = dbConnection.connect();
+        String query = "SELECT r.receipt_id, r.receipt_date, r.membership_id, r.staff_id, " +
+                      "COALESCE(STRING_AGG(CASE WHEN rd.product_id IS NOT NULL THEN CAST(rd.product_id AS VARCHAR(10)) END, ', '), '0') AS product_ids, " +
+                      "COALESCE(STRING_AGG(CASE WHEN rd.voucher_id IS NOT NULL THEN CAST(rd.voucher_id AS VARCHAR(10)) END, ', '), '0') AS voucher_ids " +
+                      "FROM receipt r " +
+                      "LEFT JOIN receipt_details rd ON r.receipt_id = rd.parent_receipt_id " +
+                      "GROUP BY r.receipt_id, r.receipt_date, r.membership_id, r.staff_id " +
+                      "ORDER BY r.receipt_id";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        return stmt.executeQuery();
+    } catch (Exception e) {
+        e.printStackTrace();
+        return null;
     }
+}
 
     public MembershipDataSet getMembershipById(int id) {
         try {
@@ -48,15 +54,24 @@ public class ViewTransactionDAO {
         }
     }
     public ResultSet fillter(String startdate, String enddate) {
-    try {
+  try {
         Connection conn = dbConnection.connect();
-        String query = "SELECT * FROM receipt WHERE CONVERT(date, recipt_date) BETWEEN ? AND ?";
-        PreparedStatement ps = conn.prepareStatement(query);
-        ps.setString(1, startdate); 
-        ps.setString(2, enddate);   
-        return ps.executeQuery();
+        String query = "SELECT r.receipt_id, r.receipt_date, r.membership_id, r.staff_id, " +
+                      "COALESCE(STRING_AGG(CASE WHEN rd.product_id IS NOT NULL THEN CAST(rd.product_id AS VARCHAR(10)) END, ', '), '0') AS product_ids, " +
+                      "COALESCE(STRING_AGG(CASE WHEN rd.voucher_id IS NOT NULL THEN CAST(rd.voucher_id AS VARCHAR(10)) END, ', '), '0') AS voucher_ids " +
+                      "FROM receipt r " +
+                      "LEFT JOIN receipt_details rd ON r.receipt_id = rd.parent_receipt_id " +
+                      "WHERE CONVERT(date, r.receipt_date) BETWEEN ? AND ? " +
+                      "GROUP BY r.receipt_id, r.receipt_date, r.membership_id, r.staff_id " +
+                      "ORDER BY r.receipt_id";
+        PreparedStatement ps = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        ps.setString(1, startdate);
+        ps.setString(2, enddate);
+        ResultSet rs = ps.executeQuery();
+        return rs;
     } catch (Exception e) {
         e.printStackTrace();
+        System.out.println("Debug - Filter query error: " + e.getMessage());
         return null;
     }
 }

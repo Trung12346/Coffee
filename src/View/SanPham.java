@@ -140,6 +140,12 @@ public class SanPham extends javax.swing.JPanel {
 
         jLabel2.setText("Giá:");
 
+        txtgia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtgiaActionPerformed(evt);
+            }
+        });
+
         btnnadd.setText("Thêm Sản Phẩm");
         btnnadd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -213,6 +219,10 @@ public class SanPham extends javax.swing.JPanel {
         }else{
         String ten = txtten.getText();
         Float gia = Float.parseFloat(txtgia.getText());
+        if(gia <=0){
+        JOptionPane.showMessageDialog(this, "Gia khong hop le");
+        return;
+        }
         boolean rs=spdao.add(ten,gia);
         try {
             if(rs){
@@ -225,6 +235,10 @@ public class SanPham extends javax.swing.JPanel {
         }
         hienthi();
     }//GEN-LAST:event_btnnaddActionPerformed
+
+    private void txtgiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtgiaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtgiaActionPerformed
 
     /**
      * @param args the command line arguments

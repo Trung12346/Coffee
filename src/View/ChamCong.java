@@ -13,6 +13,13 @@ import javax.swing.table.DefaultTableModel;
 import java.util.concurrent.atomic.AtomicInteger;
 import Model.objectToInt;
 import Service.CongDAO;
+import Service.dbConnection;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import javax.swing.JOptionPane;
+import java.sql.Statement;
+import java.time.Duration;
 
 /**
  *
@@ -28,42 +35,85 @@ public class ChamCong extends javax.swing.JPanel {
      * Creates new form ChamCong
      */
     public ChamCong() throws SQLException {
-        initComponents();
+      initComponents();
         model = (DefaultTableModel) tablecong.getModel();
         displayData();
         ArrayList<Integer> staffIds = stdao.getStaffIds();
-        ArrayList todayCongIds = cdao.getTodayCongIds();
-        System.out.println(staffIds);
-        System.out.println(todayCongIds);
+        ArrayList<Integer> todayCongIds = cdao.getTodayCongIds();
         staffIds.forEach(id -> {
             if (!todayCongIds.contains(id)) {
                 try {
                     cdao.addCong(id);
                 } catch (SQLException ex) {
                     Logger.getLogger(ChamCong.class.getName()).log(Level.SEVERE, null, ex);
+                    javax.swing.JOptionPane.showMessageDialog(null, "Lỗi khi thêm công: " + ex.getMessage(), "Lỗi", javax.swing.JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
-
     }
 
     private void displayData() throws SQLException {
-        model.setRowCount(0);
-        ResultSet rs = cdao.getTodayCong();
-        try {
-            while (rs.next()) {
-                model.addRow(new Object[]{
-                    rs.getInt("cong_id"),
-                    rs.getInt("staff_id"),
-                    rs.getString("staff_name"),
-                    rs.getInt("cong") == 0 ? false : true
-                }
-                );
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+         model.setRowCount(0);
+    ResultSet rs = cdao.getTodayCong();
+    try {
+        while (rs.next()) {
+    int showsUp = rs.getInt("shows_up");
+    String trangThai;
+    switch (showsUp) {
+        case 0 -> trangThai = "Vắng";
+        case 1 -> trangThai = "Đi muộn";
+        case 2 -> trangThai = "Có mặt";
+        default -> trangThai = "Không xác định";
     }
+
+    model.addRow(new Object[] {
+        rs.getInt("cong_id"),
+        rs.getInt("staff_id"),
+        rs.getString("staff_name"),
+        rs.getDate("date"),
+        rs.getTime("show_up_time"),
+        rs.getTime("shift_start") + "-" + rs.getTime("shift_end"),
+        trangThai  
+    });
+}
+    } catch (SQLException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Lỗi khi hiển thị dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
+    }
+    private void handleAssignShift(int ca) {
+    int row = tablecong.getSelectedRow();
+    if (row == -1) {
+        JOptionPane.showMessageDialog(this, "Hãy chọn một nhân viên để phân ca.");
+        return;
+    }
+
+    int congId = (int) model.getValueAt(row, 0);
+
+    Time shiftStart, shiftEnd;
+    if (ca == 1) {
+        shiftStart = Time.valueOf("06:00:00");
+        shiftEnd = Time.valueOf("11:00:00");
+    } else {
+        shiftStart = Time.valueOf("11:00:00");
+        shiftEnd = Time.valueOf("17:00:00");
+    }
+
+    try {
+        if (cdao.isShiftTaken(shiftStart, shiftEnd)) {
+            JOptionPane.showMessageDialog(this, "Ca này đã có người làm rồi.");
+            return;
+        }
+
+        cdao.updateShift(congId, shiftStart, shiftEnd);
+        model.setValueAt(shiftStart.toString() + " - " + shiftEnd.toString(), row, 5); // cột "ca làm"
+        JOptionPane.showMessageDialog(this, "Phân ca thành công");
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Lỗi khi phân ca: " + ex.getMessage());
+    }
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -77,23 +127,25 @@ public class ChamCong extends javax.swing.JPanel {
         jScrollPane2 = new javax.swing.JScrollPane();
         jScrollPane3 = new javax.swing.JScrollPane();
         tablecong = new javax.swing.JTable();
+        btnCa1 = new javax.swing.JButton();
+        btnCa2 = new javax.swing.JButton();
 
         tablecong.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Ma cong", "Ma nhan vien", "Ten nhan vien", "Cong"
+                "Ma cong", "Ma nhan vien", "Ten nhan vien", "ngay cong", "thoi gian co mat", "ca lam", "trang thai", "Cong"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, true
+                false, false, false, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -113,41 +165,218 @@ public class ChamCong extends javax.swing.JPanel {
 
         jScrollPane2.setViewportView(jScrollPane3);
 
+        btnCa1.setText("ca 1");
+        btnCa1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCa1ActionPerformed(evt);
+            }
+        });
+
+        btnCa2.setText("ca 2 ");
+        btnCa2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCa2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(92, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 736, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnCa1)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCa2))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 736, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(75, 75, 75))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(70, 70, 70)
+                .addGap(29, 29, 29)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCa1)
+                    .addComponent(btnCa2))
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(80, Short.MAX_VALUE))
         );
-
     }// </editor-fold>//GEN-END:initComponents
+private void ganCa(String caLam) {
+    int row = tablecong.getSelectedRow();
+    if (row == -1) {
+        JOptionPane.showMessageDialog(null, "Hãy chọn một dòng trong bảng.");
+        return;
+    }
 
+    tablecong.setValueAt(caLam, row, 7);
+
+    String[] parts = caLam.split("-");
+    if (parts.length != 2) {
+        JOptionPane.showMessageDialog(null, "Định dạng ca làm không hợp lệ.");
+        return;
+    }
+
+    String shiftStart = parts[0];
+    String shiftEnd = parts[1];
+
+    String congId = tablecong.getValueAt(row, 0).toString();
+
+    try {
+        Connection conn = dbConnection.connect();
+        PreparedStatement stmt = conn.prepareStatement("UPDATE cong SET shift_start = ?, shift_end = ? WHERE cong_id = ?");
+        stmt.setTime(1, Time.valueOf(shiftStart));
+        stmt.setTime(2, Time.valueOf(shiftEnd));
+        stmt.setString(3, congId);
+        stmt.executeUpdate();
+        conn.close();
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Lỗi cập nhật database.");
+    }
+}
     private void tablecongMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablecongMouseClicked
-        // TODO add your handling code here:
-        boolean cong;
-        //System.out.println(tablecong.getRowCount());
-        for (int i = 0; i < tablecong.getRowCount(); i++) {
-            
-            //System.out.println(i);
-            try {
-                System.out.println(Boolean.valueOf(tablecong.getValueAt(i, 3).toString()));
-                cong = Boolean.valueOf(tablecong.getValueAt(i, 3).toString());
-                cdao.update(Integer.valueOf(tablecong.getValueAt(i, 0).toString()), cong);
-            } catch (SQLException | NullPointerException ex) {
-                Logger.getLogger(ChamCong.class.getName()).log(Level.SEVERE, null, ex);
+int row = tablecong.getSelectedRow();
+    int column = tablecong.getSelectedColumn();
+
+    //Validate
+    if (column == 7) {
+    String caLam = tablecong.getValueAt(row, 5).toString();
+
+    //null 
+    if (caLam == null || !caLam.contains("-")) {
+        JOptionPane.showMessageDialog(null, "Vui lòng phân ca trước khi chấm công.");
+        tablecong.setValueAt(false, row, 7);
+        return;
+    }
+
+    Object showUpTime = tablecong.getValueAt(row, 4);
+    if (showUpTime != null && !showUpTime.toString().equals("")) {
+        JOptionPane.showMessageDialog(null, "Bạn đã chấm công ca này rồi. Không thể chấm lại.");
+        tablecong.setValueAt(false, row, 7);
+        return;
+    }
+
+    //trung ca 
+    for (int i = 0; i < tablecong.getRowCount(); i++) {
+        if (i != row) {
+            Object caKhac = tablecong.getValueAt(i, 5);
+            Object daCham = tablecong.getValueAt(i, 4);
+
+            if (caKhac != null && daCham != null && caLam.equals(caKhac.toString())) {
+                JOptionPane.showMessageDialog(null, "Ca làm này đã có người chấm công.");
+                tablecong.setValueAt(false, row, 7);
+                return;
             }
         }
-    }//GEN-LAST:event_tablecongMouseClicked
+    }
+
+    LocalTime now = LocalTime.now();
+
+if (caLam == null || caLam.trim().isEmpty() || caLam.equals("null") || !caLam.contains("-")) {
+    JOptionPane.showMessageDialog(null, "Vui lòng chọn ca làm trước khi chấm công.");
+    return;
+}
+
+String[] parts = caLam.split("-");
+if (parts.length != 2) {
+    JOptionPane.showMessageDialog(null, "Định dạng ca làm không hợp lệ.");
+    return;
+}
+
+LocalTime batDau;
+try {
+    batDau = LocalTime.parse(parts[0].trim());
+} catch (DateTimeParseException e) {
+    JOptionPane.showMessageDialog(null, "Thời gian bắt đầu ca làm không hợp lệ.");
+    return;
+}
+
+        long delayInMinutes = Duration.between(batDau, now).toMinutes();
+
+        int showsUp;
+        if (now.isBefore(batDau)) {
+            showsUp = 1; 
+        } else if (delayInMinutes <= 5) {
+            showsUp = 2; 
+        } else {
+            showsUp = 1;
+        }
+
+        int congId = (int) tablecong.getValueAt(row, 0);
+        cdao.updateShowsUp(congId, now, showsUp);
+
+        // Cập nhật lại bảng (nếu muốn)
+        tablecong.setValueAt(now.toString(), row, 4); // thoi gian co mat
+        tablecong.setValueAt(showsUp == 2 ? "Đúng giờ" : "Đi muộn", row, 6); // trạng thái
+    }
+    }
+
+    private void btnCa1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCa1ActionPerformed
+       int row = tablecong.getSelectedRow();
+    if (row == -1) {
+        JOptionPane.showMessageDialog(null, "Hãy chọn một dòng.");
+        return;
+    }
+
+    String caLam = "06:00:00-11:00:00";
+    tablecong.setValueAt(caLam, row, 7); 
+
+    String[] parts = caLam.split("-");
+    String shiftStart = parts[0];
+    String shiftEnd = parts[1];
+    String congId = tablecong.getValueAt(row, 0).toString(); 
+
+    try {
+        Connection conn = dbConnection.connect();
+        PreparedStatement stmt = conn.prepareStatement(
+            "UPDATE cong SET shift_start = ?, shift_end = ? WHERE cong_id = ?"
+        );
+        stmt.setTime(1, Time.valueOf(shiftStart));
+        stmt.setTime(2, Time.valueOf(shiftEnd));
+        stmt.setString(3, congId);
+        stmt.executeUpdate();
+        displayData();
+        conn.close();
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Lỗi cập nhật Ca 1.");
+    }
+    }//GEN-LAST:event_btnCa1ActionPerformed
+
+    private void btnCa2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCa2ActionPerformed
+ int row = tablecong.getSelectedRow();
+    if (row == -1) {
+        JOptionPane.showMessageDialog(null, "Hãy chọn một dòng.");
+        return;
+    }
+
+    String caLam = "13:00:00-17:00:00";
+    tablecong.setValueAt(caLam, row, 7);
+
+    String[] parts = caLam.split("-");
+    String shiftStart = parts[0];
+    String shiftEnd = parts[1];
+    String congId = tablecong.getValueAt(row, 0).toString();
+
+    try {
+        Connection conn = dbConnection.connect();
+        PreparedStatement stmt = conn.prepareStatement(
+            "UPDATE cong SET shift_start = ?, shift_end = ? WHERE cong_id = ?"
+        );
+        stmt.setTime(1, Time.valueOf(shiftStart));
+        stmt.setTime(2, Time.valueOf(shiftEnd));
+        stmt.setString(3, congId);
+        stmt.executeUpdate();
+        displayData();
+        conn.close();
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Lỗi cập nhật Ca 2.");
+    }    }//GEN-LAST:event_btnCa2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -190,6 +419,8 @@ public class ChamCong extends javax.swing.JPanel {
 //    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCa1;
+    private javax.swing.JButton btnCa2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable tablecong;

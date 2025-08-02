@@ -80,7 +80,7 @@ public class CreateTransaction extends javax.swing.JPanel {
         });
     }
 
-    public String requestRecipt() throws JsonProcessingException, SQLException, FileNotFoundException {
+    public String requestRecipt() throws JsonProcessingException, SQLException, FileNotFoundException, Exception {
         ArrayList<Integer> productIds = new ArrayList();
         ArrayList quantities = new ArrayList();
         ArrayList<ProductDataSet> products = new ArrayList();
@@ -92,11 +92,16 @@ public class CreateTransaction extends javax.swing.JPanel {
             quantities.add(jTable2.getValueAt(i, 3));
         }
 
+        
+        
         AtomicInteger index = new AtomicInteger();
         productIds.forEach(productId -> {
             try {
                 ResultSet rs = transactDAO.selectProductById(Integer.parseInt(productId.toString()));
                 rs.next();
+                
+                //CONTINUE HERE
+                
                 products.add(new ProductDataSet(rs.getInt("product_id"),
                         rs.getString("product_name"),
                         rs.getFloat("product_price"),
@@ -107,6 +112,26 @@ public class CreateTransaction extends javax.swing.JPanel {
             }
 
         });
+        
+        for(int i = 0; i < productIds.size(); i++) {
+            int readyQuantity = transactDAO.howManyCraftable(productIds.get(i));
+            int productIndexFromProducts;
+            int quantity = 1;
+            String productName = "";
+            for(int x = 0; x < products.size(); x++) {
+                if(productIds.get(i) == products.get(x).productId) {
+                    productIndexFromProducts = x;
+                    quantity = products.get(x).quantity;
+                    productName = products.get(x).productName;
+                }
+            }
+            
+            if(readyQuantity < quantity) {
+                JOptionPane.showMessageDialog(this, String.format("san pham %s da het hang", productName));
+                throw new Exception();
+            }
+        }
+            
         int[] ids = objectToInt.objectToInteger(productIds);
         ArrayList<VoucherDataSet> vouchers = new ArrayList();
         try {
@@ -241,6 +266,14 @@ public class CreateTransaction extends javax.swing.JPanel {
 //        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 //        System.out.println(sdf.format(test));
         System.out.println(JSON.StringifyJSON(transaction));
+        
+        products.forEach(product -> {
+            try {
+                transactDAO.consumeMaterial(product.productId, product.quantity);
+            } catch (SQLException ex) {
+                Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
         return JSON.StringifyJSON(transaction);
     }
     /**
@@ -471,6 +504,8 @@ public class CreateTransaction extends javax.swing.JPanel {
             transactDAO.createTransaction(requestRecipt());
         } catch (JsonProcessingException | SQLException | FileNotFoundException ex) {
             Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            System.out.println(ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

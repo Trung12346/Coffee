@@ -102,6 +102,12 @@ public class Voucher extends javax.swing.JPanel {
 
         jLabel3.setText("Giá sau khi áp dụng");
 
+        txtprice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtpriceActionPerformed(evt);
+            }
+        });
+
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel4.setText("VOUCHER");
 
@@ -196,14 +202,22 @@ public class Voucher extends javax.swing.JPanel {
     String endStr = txtenddate.getText().trim();
     int productId = Integer.parseInt(txtmasp.getText().trim());
     float newPrice = Float.parseFloat(txtprice.getText().trim());
-
+    if(newPrice >= 0){
+    }else{
+    JOptionPane.showMessageDialog(this, "Gia khong hop le");
+    return;
+    }
     // Định dạng ngày người dùng nhập: dd/MM/yyyy
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     sdf.setLenient(false);
 
     Timestamp start_date = new Timestamp(sdf.parse(startStr).getTime());
     Timestamp end_date = new Timestamp(sdf.parse(endStr).getTime());
-
+    if(start_date.before(end_date)){
+    }else{
+        JOptionPane.showMessageDialog(this, "ngay khong hop le");
+    return;
+    }
     boolean success = voucherdao.add(start_date, end_date, productId, newPrice);
     if (success) {
         JOptionPane.showMessageDialog(this, "Thêm voucher thành công!");
@@ -214,7 +228,7 @@ public class Voucher extends javax.swing.JPanel {
 } catch (Exception e) {
     JOptionPane.showMessageDialog(this, "Lỗi nhập liệu! Hãy nhập đúng định dạng: dd/MM/yyyy và kiểm tra số liệu khác.");
     e.printStackTrace();
-}
+        }
 
         
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -258,6 +272,11 @@ public class Voucher extends javax.swing.JPanel {
     private void txtenddateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtenddateActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtenddateActionPerformed
+
+    private void txtpriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtpriceActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_txtpriceActionPerformed
 
     /**
      * @param args the command line arguments

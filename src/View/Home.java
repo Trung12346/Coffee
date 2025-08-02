@@ -32,7 +32,7 @@ public class Home extends javax.swing.JFrame {
         jButton8.setEnabled(false);
         jButton10.setEnabled(false);
         panel.setLayout(new GridLayout(0, 1));
-        
+
         if (GlobalVariables.args.contains("+admin")) {
             jButton1.setEnabled(true);
             jButton2.setEnabled(true);
@@ -185,6 +185,11 @@ public class Home extends javax.swing.JFrame {
         );
 
         jButton9.setText("Công thức");
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -202,9 +207,8 @@ public class Home extends javax.swing.JFrame {
                             .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jButton8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButton9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(41, 41, 41)
                         .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -256,15 +260,14 @@ public class Home extends javax.swing.JFrame {
         Membership frameMembership = new Membership();
         frameMembership.setSize(771, 461);
         frameMembership.setLocation(0, 0);
-        
-        
+
         panel.removeAll();
         panel.add(frameMembership, BorderLayout.CENTER);
         //panel.setLayout(new GridLayout(0, 1));
         panel.repaint();
         panel.revalidate();
         //this.pack();
-        
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -380,6 +383,22 @@ public class Home extends javax.swing.JFrame {
         panel.repaint();
         panel.revalidate();
     }//GEN-LAST:event_jButton8ActionPerformed
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        try {
+            // TODO add your handling code here:
+            RecipeManagement frameRecipeManagement = new RecipeManagement();
+            frameRecipeManagement.setSize(771, 461);
+            frameRecipeManagement.setLocation(0, 0);
+
+            panel.removeAll();
+            panel.add(frameRecipeManagement, BorderLayout.CENTER);
+            panel.repaint();
+            panel.revalidate();
+        } catch (SQLException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton9ActionPerformed
 
     /**
      * @param args the command line arguments
