@@ -6,6 +6,7 @@ package Service;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -24,7 +25,7 @@ public class StaffDAO {
 //            if (conn == null) {
 //                throw new SQLException("Không thể kết nối đến database");
 //            }
-            String query = "SELECT staff_id, age, email, phone FROM staff";
+            String query = "SELECT staff_id,staff_name,ngaysinh,age, email,phone,identitycard FROM staff";
             PreparedStatement stmt = conn.prepareStatement(query);
             return stmt.executeQuery();
         } catch (SQLException e) {
@@ -33,7 +34,7 @@ public class StaffDAO {
         }
     }
 
-    public boolean addStaff(String name, int age, String email, String phone, String args, String password) throws NoSuchAlgorithmException {
+    public boolean addStaff(String name, long age, String email, String phone, String args, String password, String identitycard, LocalDate ngaysinh) throws NoSuchAlgorithmException {
 //        Connection conn = null;
         try {
             Connection conn = dbConnection.connect();
@@ -47,7 +48,7 @@ public class StaffDAO {
             }
             String passwordHash = LoginDAO.SHA256(password + salt);
             Statement stm = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-            String query_0 = String.format("INSERT INTO staff (staff_name, age, email, phone) VALUES ('%s', %d, '%s', '%s')", name, age, email, phone);
+            String query_0 = String.format("INSERT INTO staff (staff_name, age, email, phone,identitycard,ngaysinh) VALUES ('%s', %d, '%s', '%s','%s','%s')", name, age, email, phone,identitycard,ngaysinh);
             String query_1 = "GO";
 //            String query_2 = "DECLARE @newId INT";
             String query_3 = "SELECT TOP 1 staff_id FROM staff ORDER BY staff_id DESC";
@@ -116,7 +117,7 @@ public class StaffDAO {
 //            }
 //        }
 //    }
-
+                                    
     public boolean updateStaff(int staffId, int age, String email, String phone) {
         Connection conn = null;
         try {
@@ -124,7 +125,7 @@ public class StaffDAO {
             if (conn == null) {
                 throw new SQLException("Không thể kết nối đến database");
             }
-            String query = "UPDATE staff SET age = ?, email = ?, phone = ? WHERE staff_id = ?";
+            String query = "UPDATE staff SET age = ?, email = ?, phone = ?,identitycard = ? WHERE staff_id = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, age);
             stmt.setString(2, email);

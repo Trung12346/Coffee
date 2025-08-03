@@ -19,8 +19,8 @@ import javax.swing.*;
  *
  * @author ADMIN
  */
-public class Membership extends JPanel {
-    MembershipDAO mmbs= new MembershipDAO();
+public class MembershipIntegrable extends JPanel {
+    MembershipDAO mmbs = new MembershipDAO();
     private LocalDate ngayhethan;
     private LocalDate ngayhientai;
 
@@ -28,31 +28,12 @@ public class Membership extends JPanel {
      * Creates new form membership
      */
     DefaultTableModel model;
-    public Membership() {
+    public MembershipIntegrable() {
         initComponentsOverride();
-        model = (DefaultTableModel) tblmembership.getModel();
-        loaddata();
 //        jComboBox1.setVisible(false);
 //        cbboxexpirday.setVisible(false);
 //        rank.setVisible(false);
 //        jLabel2.setVisible(false);
-    }
-    public void loaddata(){
-        model.setRowCount(0);
-        ResultSet rs = mmbs.hienthi();
-        try {
-            while(rs.next()){
-            model.addRow(new Object[]{
-            rs.getInt("membership_id"),
-                rs.getString("membership_name"),
-                rs.getString("phone"),
-//                rs.getTimestamp("expiration_date").toString(),
-//                rs.getString("rank_name")
-            });
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -67,8 +48,6 @@ public class Membership extends JPanel {
         jLabel1 = new javax.swing.JLabel();
         txtsdt = new javax.swing.JTextField();
         btnnsignin = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblmembership = new javax.swing.JTable();
 
         label.setText("Tên");
 
@@ -81,32 +60,12 @@ public class Membership extends JPanel {
             }
         });
 
-        tblmembership.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
-            },
-            new String [] {
-                "Hội Viên Mã", "Tên Hội viên", "Số Điện Thoại Hội Viên"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(tblmembership);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
+    
             .addGroup(layout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -136,7 +95,7 @@ public class Membership extends JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(btnnsignin)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 123, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
+            )
         );
     }
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -147,10 +106,8 @@ public class Membership extends JPanel {
         jLabel1 = new javax.swing.JLabel();
         txtsdt = new javax.swing.JTextField();
         btnnsignin = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblmembership = new javax.swing.JTable();
 
-        label.setText("Tên");
+        label.setText("Tên khách hàng");
 
         jLabel1.setText("Số Điện Thoại:");
 
@@ -163,62 +120,38 @@ public class Membership extends JPanel {
             }
         });
 
-        tblmembership.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
-            },
-            new String [] {
-                "Hội Viên Mã", "Tên Hội viên", "Số Điện Thoại Hội Viên"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(tblmembership);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
             .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1)
-                    .addComponent(label))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(txtsdt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
-                        .addComponent(txtten, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addComponent(btnnsignin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(218, 218, 218)
-                        .addComponent(btnnsignin, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(241, 241, 241))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(label)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtten, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+                            .addComponent(txtsdt))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(46, 46, 46)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(label)
-                    .addComponent(txtten))
+                    .addComponent(txtten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtsdt))
-                .addGap(18, 18, 18)
-                .addComponent(btnnsignin, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(110, 110, 110)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnnsignin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -253,7 +186,6 @@ if (ten.isEmpty() || sdt.isEmpty()) {
     boolean isAdded = mmbs.add(ten, sdt, securityCode);
     if (isAdded) {
     JOptionPane.showMessageDialog(this, "Dang ky thanh cong");
-    loaddata();
     } else {
     JOptionPane.showMessageDialog(this, "Dang ky that bai");
     }
@@ -300,9 +232,7 @@ if (ten.isEmpty() || sdt.isEmpty()) {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnnsignin;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel label;
-    private javax.swing.JTable tblmembership;
     private javax.swing.JTextField txtsdt;
     private javax.swing.JTextField txtten;
     // End of variables declaration//GEN-END:variables

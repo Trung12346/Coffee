@@ -7,19 +7,40 @@ package View;
 import Service.StaffDAO;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Formatter;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 
 /**
  *
  * @author ADMIN
  */
 public class Staff extends javax.swing.JPanel {
-
+    
     DefaultTableModel model;
     public StaffDAO nhanvienDAO = new StaffDAO();
     final String manager = "+admin";
     final String staff = "+membership +report +createTransaction +warehouseLog";
+    JPasswordField passwordfield = new JPasswordField(20);
+    public boolean isvalid(long age) {
+        if (age > 16) {
+            JOptionPane.showMessageDialog(this, "tuoi thanh cong");
+            return true;
+        }
+        JOptionPane.showMessageDialog(this, "them tuoi khong thanh cong");
+        return false;
+    }
 
-    public Staff() {
+    public Staff() throws SQLException {
         initComponents();
         model = (DefaultTableModel) tbnhanvien.getModel();
         model.setRowCount(0); // Khởi tạo JTable rỗng
@@ -28,22 +49,35 @@ public class Staff extends javax.swing.JPanel {
         jLabel2.setVisible(false);
         btxoa.setVisible(false);
         btload.setVisible(false);
+        passwordfield.setBounds(280, 260, 100, 20);
+//        this.add(passwordfield);
+        passwordfield.setEchoChar('*');
     }
-
-    private void loadDataToTable() {
+    
+    private void loadDataToTable() throws SQLException {
         model.setRowCount(0); // Xóa dữ liệu cũ
         ResultSet rs = nhanvienDAO.loaddata();
+
         try {
             if (rs != null) {
                 while (rs.next()) {
+//                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                    Date ngaysinh = rs.getDate("ngaysinh");
+//                    LocalDate ngaysinh1 = LocalDate.parse((CharSequence) ngaysinh, formatter);
+//                    System.out.println(ngaysinh1);
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                    String ngaysinh1 = sdf.format(ngaysinh);
                     model.addRow(new Object[]{
                         rs.getInt("staff_id"),
+                        rs.getString("staff_name"),
+                        ngaysinh1,
                         rs.getInt("age"),
                         rs.getString("email"),
-                        rs.getString("phone")
+                        rs.getString("phone"),
+                        rs.getString("identitycard")
                     });
                 }
-                rs.close(); // Đóng ResultSet
+                rs.close(); 
             } else {
                 javax.swing.JOptionPane.showMessageDialog(this, "Không thể tải dữ liệu!");
             }
@@ -59,7 +93,6 @@ public class Staff extends javax.swing.JPanel {
         txtemail.setText("");
         txtphone.setText("");
     }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -87,6 +120,8 @@ public class Staff extends javax.swing.JPanel {
         txtpassword = new javax.swing.JTextField();
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
+        jLabel8 = new javax.swing.JLabel();
+        txtcccd = new javax.swing.JTextField();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 51, 51));
@@ -100,7 +135,7 @@ public class Staff extends javax.swing.JPanel {
             }
         });
 
-        jLabel3.setText("nhập tuổi:");
+        jLabel3.setText("Ngày Sinh:");
 
         txttuoi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -118,17 +153,17 @@ public class Staff extends javax.swing.JPanel {
 
         tbnhanvien.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "id", "tuổi", "email", "phone"
+                "id", "Tên", "ngày sinh", "tuổi", "email", "phone", "CCCD"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Long.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -184,11 +219,21 @@ public class Staff extends javax.swing.JPanel {
 
         jLabel7.setText("nhập mật khẩu:");
 
+        txtpassword.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                txtpasswordInputMethodTextChanged(evt);
+            }
+        });
+
         buttonGroup1.add(jRadioButton1);
         jRadioButton1.setText("Quan ly");
 
         buttonGroup1.add(jRadioButton2);
         jRadioButton2.setText("Nhan vien");
+
+        jLabel8.setText("CCCD:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -198,7 +243,7 @@ public class Staff extends javax.swing.JPanel {
                 .addGap(95, 95, 95)
                 .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 768, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -207,10 +252,15 @@ public class Staff extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtmanhanvien, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(btthem, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(txtmanhanvien, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(53, 53, 53)
+                                        .addComponent(jLabel8)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(txtcccd, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btthem))
                                     .addComponent(btsua, javax.swing.GroupLayout.Alignment.TRAILING)))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -257,16 +307,19 @@ public class Staff extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(txtmanhanvien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(30, 30, 30)
                         .addComponent(btsua)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btthem)))
+                        .addComponent(btthem))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(txtmanhanvien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8)
+                            .addComponent(txtcccd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btxoa)
@@ -300,14 +353,25 @@ public class Staff extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jRadioButton1)
                     .addComponent(jRadioButton2))
-                .addGap(33, 33, 33)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void txttuoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txttuoiActionPerformed
         // TODO add your handling code here:
+        String ngaysinh1 = txttuoi.getText();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        formatter = formatter.withLocale(Locale.US);
+        try {
+            LocalDate ngaysinh = LocalDate.parse(ngaysinh1, formatter);
+            LocalDate now = LocalDate.now();
+            long tuoi = ChronoUnit.YEARS.between(ngaysinh, now);
+            System.out.println(tuoi);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }//GEN-LAST:event_txttuoiActionPerformed
 
     private void txtemailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtemailActionPerformed
@@ -320,11 +384,40 @@ public class Staff extends javax.swing.JPanel {
 
     private void btthemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btthemActionPerformed
         try {
-            int age = Integer.parseInt(txttuoi.getText().trim());
+            String ngaysinh1 = txttuoi.getText();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+//            formatter = formatter.withLocale(Locale.US);
+
+            LocalDate ngaysinh = LocalDate.parse(ngaysinh1, formatter);
+
+            LocalDate now = LocalDate.now();
+            long tuoi = ChronoUnit.YEARS.between(ngaysinh, now);
+            System.out.println(tuoi);
+            String identitycard = txtcccd.getText().trim();
+            String regex = "^[0-9]{12}$";
+            String regexphone = "^[0-9]{9,10}$";
             String email = txtemail.getText().trim();
             String phone = txtphone.getText().trim();
             String name = txtten.getText().trim();
             String password = txtpassword.getText();
+            if(phone.matches(regexphone)){
+            JOptionPane.showMessageDialog(this, "sdt hop le");
+            }else{
+            JOptionPane.showMessageDialog(this, "sdt khong hop le");
+            return;
+            }
+            if (identitycard.matches(regex)) {
+                JOptionPane.showMessageDialog(this, "cccd hop le");
+            } else {
+                JOptionPane.showMessageDialog(this, "cccd khong hop le");
+                return;
+            }
+            if (tuoi > 16) {
+                JOptionPane.showMessageDialog(this, "Tuoi hop le");
+            } else {
+                JOptionPane.showMessageDialog(this, "Tuoi khong hop le");
+                return;
+            }
             if (email.length() > 100 || phone.length() > 10) {
                 javax.swing.JOptionPane.showMessageDialog(this, "Email hoặc phone quá dài!");
                 return;
@@ -338,7 +431,7 @@ public class Staff extends javax.swing.JPanel {
                 javax.swing.JOptionPane.showMessageDialog(this, "Khong de trong quyen");
                 throw new Exception();
             }
-            boolean added = nhanvienDAO.addStaff(name, age, email, phone, args, password);
+            boolean added = nhanvienDAO.addStaff(name, tuoi, email, phone, args, password, identitycard, ngaysinh);
             if (added) {
                 javax.swing.JOptionPane.showMessageDialog(this, "Thêm nhân viên thành công!");
                 loadDataToTable(); // Tải lại JTable
@@ -370,20 +463,28 @@ public class Staff extends javax.swing.JPanel {
             }
         } catch (NumberFormatException e) {
             javax.swing.JOptionPane.showMessageDialog(this, "ID và tuổi phải là số nguyên!");
-
+       
+        } catch (SQLException ex) {
+            Logger.getLogger(Staff.class.getName()).log(Level.SEVERE, null, ex);
         }    }//GEN-LAST:event_btsuaActionPerformed
 
     private void btloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btloadActionPerformed
-        loadDataToTable();
+        try {
+            loadDataToTable();
+        } catch (SQLException ex) {
+            Logger.getLogger(Staff.class.getName()).log(Level.SEVERE, null, ex);
+        }
         javax.swing.JOptionPane.showMessageDialog(this, "Tải dữ liệu thành công!");    }//GEN-LAST:event_btloadActionPerformed
 
     private void tbnhanvienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbnhanvienMouseClicked
         int selectedRow = tbnhanvien.getSelectedRow();
         if (selectedRow >= 0) {
             txtmanhanvien.setText(model.getValueAt(selectedRow, 0).toString());
-            txttuoi.setText(model.getValueAt(selectedRow, 1).toString());
-            txtemail.setText(model.getValueAt(selectedRow, 2).toString());
-            txtphone.setText(model.getValueAt(selectedRow, 3).toString());
+            txtten.setText(model.getValueAt(selectedRow, 1).toString());
+            txttuoi.setText(model.getValueAt(selectedRow, 2).toString());
+            txtemail.setText(model.getValueAt(selectedRow, 4).toString());
+            txtphone.setText(model.getValueAt(selectedRow, 5).toString());
+            txtcccd.setText(model.getValueAt(selectedRow, 6).toString());
         }
     }//GEN-LAST:event_tbnhanvienMouseClicked
 
@@ -406,6 +507,10 @@ public class Staff extends javax.swing.JPanel {
 //            javax.swing.JOptionPane.showMessageDialog(this, "ID phải là số nguyên!");
 //        }
     }//GEN-LAST:event_btxoaActionPerformed
+    
+    private void txtpasswordInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_txtpasswordInputMethodTextChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtpasswordInputMethodTextChanged
 
     /**
      * @param args the command line arguments
@@ -457,11 +562,13 @@ public class Staff extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable tbnhanvien;
+    private javax.swing.JTextField txtcccd;
     private javax.swing.JTextField txtemail;
     private javax.swing.JTextField txtmanhanvien;
     private javax.swing.JTextField txtpassword;

@@ -22,12 +22,14 @@ public class Warehouse_old extends javax.swing.JPanel {
     /**
      * Creates new form warehouse
      */
+    ArrayList<STable1> table_1Rows = new ArrayList(); 
     DefaultTableModel model_1;
     public Warehouse_old() throws SQLException {
         initComponents();
         loadTableData();
         model_1 = (DefaultTableModel) jTable1.getModel();
-        loadTable_1(getIngredients());
+        table_1Rows = getIngredients();
+        loadTable_1(table_1Rows);
     }
     public void loadTable_1(ArrayList<STable1> rows) {
         model_1.setRowCount(0);
@@ -65,21 +67,28 @@ public class Warehouse_old extends javax.swing.JPanel {
 
         tbchamcong.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "tên ", "số lượng ", "thời gian nhập", "mã nhân viên"
+                "Thời gian nhập", "Id nguyên liệu", "số lượng"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.Integer.class, java.lang.Float.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         jScrollPane1.setViewportView(tbchamcong);
@@ -134,6 +143,11 @@ public class Warehouse_old extends javax.swing.JPanel {
             }
         });
         jTable1.setPreferredSize(new java.awt.Dimension(20, 80));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane3.setViewportView(jTable1);
 
         jScrollPane2.setViewportView(jScrollPane3);
@@ -202,9 +216,10 @@ public class Warehouse_old extends javax.swing.JPanel {
     private void btthemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btthemActionPerformed
         String ten = txtten.getText().trim();
         String soluong = txtsoluong.getText().trim();
+        int id = Integer.parseInt(jTextField1.getText());
         //String time = txttime.getText().trim(); 
         WarehouseDAO dao = new WarehouseDAO();
-        if (dao.addWarehouseLog(ten, soluong)) {
+        if (dao.addWarehouseLog(ten, soluong, id)) {
             JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
             dao.loadTableData((DefaultTableModel) tbchamcong.getModel());
             txtten.setText("");
@@ -215,6 +230,14 @@ public class Warehouse_old extends javax.swing.JPanel {
     private void txtsoluongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtsoluongActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtsoluongActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        int selectedRow = jTable1.getSelectedRow();
+        jTextField1.setText(Integer.toString(table_1Rows.get(selectedRow).ingredientId));
+        txtten.setText(table_1Rows.get(selectedRow).ingredientLabel);
+        txtsoluong.setText("1");
+    }//GEN-LAST:event_jTable1MouseClicked
 
     /**
      * @param args the command line arguments

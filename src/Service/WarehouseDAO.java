@@ -30,8 +30,8 @@ public class WarehouseDAO {
         return table_1Rows;
     }
     
-    public boolean addWarehouseLog(String object, String quantityStr) {
-        if (object.isEmpty() || quantityStr.isEmpty()) {
+    public boolean addWarehouseLog(String label, String quantityStr, int id) {
+        if (label.isEmpty() || quantityStr.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -63,8 +63,8 @@ public class WarehouseDAO {
 
         String sql = "INSERT INTO storage VALUES (CURRENT_TIMESTAMP, ?, ?)";
         try (Connection conn = dbConnection.connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, object);
-            pstmt.setInt(2, quantity);
+            pstmt.setInt(1, id);
+            pstmt.setFloat(2, quantity);
 
             pstmt.executeUpdate();
             return true;
@@ -78,14 +78,13 @@ public class WarehouseDAO {
     public void loadTableData(DefaultTableModel model) {
         model.setRowCount(0); // Xóa dữ liệu cũ trong bảng
 
-        try (Connection conn = dbConnection.connect(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT object, quantity, import_time, staff_id FROM warehouse_log")) {
+        try (Connection conn = dbConnection.connect(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT * FROM storage")) {
 
             while (rs.next()) {
                 Object[] row = {
-                    rs.getString("object"),
-                    rs.getInt("quantity"),
-                    new SimpleDateFormat("yy/MM/dd HH:mm:ss").format(rs.getTimestamp("import_time")),
-                    rs.getInt("staff_id")
+                    new SimpleDateFormat("yy/MM/dd HH:mm:ss").format(rs.getTimestamp("restock_time")),
+                    rs.getInt("item"),
+                    rs.getFloat("quantity")
                 };
                 model.addRow(row);
             }

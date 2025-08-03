@@ -26,9 +26,9 @@ import org.json.JSONObject;
  * @author maith
  */
 public class TransactionDAO {
-
+    public static int lastRecordGlb;
     Connection conn = dbConnection.connect();
-
+    
     public ResultSet getProducts() throws SQLException {
         String query = "SELECT * FROM product";
         Statement stm = conn.createStatement();
@@ -180,7 +180,7 @@ public class TransactionDAO {
 
     //DEPRECATED METHOD}-----------------------------------------------------------------------------------------------------------------------
     public void createTransaction(String js) throws SQLException {
-
+        Locale.setDefault(Locale.US);
         JSONObject jo = JSON.parseJSON(js);
 //        java.sql.Timestamp dateTimeSQL = new java.sql.Timestamp(jo.getLong("reciptDate"));
 //        System.out.println(dateTimeSQL);
@@ -188,7 +188,10 @@ public class TransactionDAO {
         JSONArray vouchers = jo.getJSONArray("vouchers");
         int membershipId = jo.getJSONObject("membership").getInt("id");
         int staffId = jo.getInt("staffId");
-
+        String paymentMethod = jo.getString("paymentMethod");
+        String paymentState = jo.getString("paymentState");
+        float amount = jo.getFloat("amount");
+        String note = jo.getString("note");
 //        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        java.util.Date dateTimeUtil = new java.util.Date(dateTimeSQL.getTime());
 //        String dateTime = sdf.format(dateTimeUtil);
@@ -204,36 +207,49 @@ public class TransactionDAO {
 //                membershipId,
 //                staffId
 //        );
-        String query = String.format("INSERT INTO receipt VALUES ('%s', %d, %d)", dateTime, membershipId, staffId);
+        String query = String.format("INSERT INTO receipt VALUES (N'%s', %d, %d, N'%s', N'%s', %f, N'%s')", dateTime, membershipId, staffId, paymentMethod, paymentState, amount, note);
         Statement stm = conn.createStatement();
         stm.executeUpdate(query);
         query = "SELECT @@identity AS last_record";
         ResultSet rs = stm.executeQuery(query);
         rs.next();
         int lastRecord = rs.getInt("last_record");
+        TransactionDAO.lastRecordGlb = lastRecord;
         for (int i = 0; i < products.length(); i++) {
-
+            System.out.println("loop running");
             float productPrice = Float.parseFloat(products.getJSONObject(i).get("productPrice").toString());
-            for (int x = 0; x < vouchers.length(); x++) {
-                if (products.getJSONObject(i).get("productId") == vouchers.getJSONObject(x).get("productId")) {
-                    productPrice = Float.parseFloat(vouchers.getJSONObject(i).get("newPrice").toString());
+            if (vouchers.length() > 0) {
+                for (int x = 0; x < vouchers.length(); x++) {
+                    if (products.getJSONObject(i).get("productId") == vouchers.getJSONObject(x).get("productId")) {
+                        productPrice = Float.parseFloat(vouchers.getJSONObject(i).get("newPrice").toString());
 
-                    query = String.format("INSERT INTO receipt_details VALUES (%d, %d, %d, %d)",
-                            lastRecord,
-                            products.getJSONObject(i).get("productId"),
-                            products.getJSONObject(i).get("quantity"),
-                            vouchers.getJSONObject(x).get("id")
-                    );
-                } else {
-                    query = String.format("INSERT INTO receipt_details VALUES (%d, %d, %d, NULL)",
-                            lastRecord,
-                            products.getJSONObject(i).get("productId"),
-                            products.getJSONObject(i).get("quantity")
-                    );
+                        query = String.format("INSERT INTO receipt_details VALUES (%d, %d, %d, %d)",
+                                lastRecord,
+                                products.getJSONObject(i).get("productId"),
+                                products.getJSONObject(i).get("quantity"),
+                                vouchers.getJSONObject(x).get("id")
+                        );
+                    } else {
+                        query = String.format("INSERT INTO receipt_details VALUES (%d, %d, %d, NULL)",
+                                lastRecord,
+                                products.getJSONObject(i).get("productId"),
+                                products.getJSONObject(i).get("quantity")
+                        );
+                    }
                 }
-                stm = conn.createStatement();
-                stm.executeUpdate(query);
+            } else {
+                query = String.format("INSERT INTO receipt_details VALUES (%d, %d, %d, NULL)",
+                        lastRecord,
+                        products.getJSONObject(i).get("productId"),
+                        products.getJSONObject(i).get("quantity")
+                );
             }
+
+            System.out.println("receipt details");
+            System.out.println(query);
+            stm = conn.createStatement();
+            stm.executeUpdate(query);
+
         }
         System.out.println("membershipid");
         System.out.println(membershipId);
@@ -302,5 +318,10 @@ public class TransactionDAO {
             stm = conn.createStatement();
             stm.executeUpdate(query);
         }
+    }
+    public void setReceiptCompleted(int receiptId) throws SQLException {
+        Statement stm = conn.createStatement();
+        String query = String.format("UPDATE receipt SET paymentState = 'Đã thanh toán' WHERE receipt_id = %d", receiptId);
+        stm.executeUpdate(query);
     }
 }

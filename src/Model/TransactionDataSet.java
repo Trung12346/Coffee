@@ -19,6 +19,10 @@ public class TransactionDataSet {
     public float total;
     public boolean usePoint;
     public float replenishPoint;
+    public String paymentMethod;
+    public String paymentState;
+    public float amount;
+    public String note;
 
     public TransactionDataSet(int reciptId, Timestamp reciptDate, ArrayList<ProductDataSet> products, ArrayList<VoucherDataSet> vouchers, MembershipDataSet membership) {
         this.reciptId = reciptId;
@@ -28,7 +32,7 @@ public class TransactionDataSet {
         this.membership = membership;
     }
 
-    public TransactionDataSet(Timestamp reciptDate, ArrayList<ProductDataSet> products, ArrayList<VoucherDataSet> vouchers, MembershipDataSet membership, int staffId, float total, boolean usePoint, float replenishPoint) {
+    public TransactionDataSet(Timestamp reciptDate, ArrayList<ProductDataSet> products, ArrayList<VoucherDataSet> vouchers, MembershipDataSet membership, int staffId, float total, boolean usePoint, float replenishPoint, String paymentMethod, String paymentState, float amount, String note) {
         this.reciptDate = reciptDate;
         this.products = products;
         this.vouchers = vouchers;
@@ -37,6 +41,10 @@ public class TransactionDataSet {
         this.total = total;
         this.usePoint = usePoint;
         this.replenishPoint = replenishPoint;
+        this.paymentMethod = paymentMethod;
+        this.paymentState = paymentState;
+        this.amount = amount;
+        this.note = note;
     }
 
     public TransactionDataSet(Timestamp reciptDate, ArrayList<ProductDataSet> products, ArrayList<VoucherDataSet> vouchers) {

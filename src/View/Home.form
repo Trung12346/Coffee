@@ -45,7 +45,7 @@
                   </Group>
                   <Group type="102" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="837" max="32767" attributes="0"/>
+                      <EmptySpace pref="1142" max="32767" attributes="0"/>
                       <Component id="jButton12" min="-2" pref="87" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -87,7 +87,7 @@
                   </Group>
                   <Component id="panel" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="56" max="32767" attributes="0"/>
+              <EmptySpace pref="30" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -188,12 +188,12 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="757" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="1086" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="434" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="602" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>

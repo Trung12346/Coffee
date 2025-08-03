@@ -73,7 +73,7 @@ public class Home extends javax.swing.JFrame {
         if (GlobalVariables.args.contains("+warehouseLog")) {
             jButton7.setEnabled(true);
         }
-        
+
         jButton8.setVisible(false);
     }
 
@@ -180,11 +180,11 @@ public class Home extends javax.swing.JFrame {
         panel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 757, Short.MAX_VALUE)
+            .addGap(0, 1086, Short.MAX_VALUE)
         );
         panelLayout.setVerticalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 434, Short.MAX_VALUE)
+            .addGap(0, 602, Short.MAX_VALUE)
         );
 
         jButton9.setText("Công thức");
@@ -218,7 +218,7 @@ public class Home extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 837, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1142, Short.MAX_VALUE)
                         .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         layout.setVerticalGroup(
@@ -252,7 +252,7 @@ public class Home extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton8))
                     .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         pack();
@@ -294,14 +294,20 @@ public class Home extends javax.swing.JFrame {
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         // TODO add your handling code here:
-        Staff frameStaff = new Staff();
-        frameStaff.setSize(771, 461);
-        frameStaff.setLocation(0, 0);
+        Staff frameStaff;
+        try {
+            frameStaff = new Staff();
+            frameStaff.setSize(771, 461);
+            frameStaff.setLocation(0, 0);
 
-        panel.removeAll();
-        panel.add(frameStaff, BorderLayout.CENTER);
-        panel.repaint();
-        panel.revalidate();
+            panel.removeAll();
+            panel.add(frameStaff, BorderLayout.CENTER);
+            panel.repaint();
+            panel.revalidate();
+        } catch (SQLException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }//GEN-LAST:event_jButton10ActionPerformed
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
@@ -365,14 +371,20 @@ public class Home extends javax.swing.JFrame {
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
-        Warehouse_old frameWarehouse = new Warehouse_old();
-        frameWarehouse.setSize(771, 461);
-        frameWarehouse.setLocation(0, 0);
+        Warehouse_old frameWarehouse;
+        try {
+            frameWarehouse = new Warehouse_old();
+            frameWarehouse.setSize(771, 461);
+            frameWarehouse.setLocation(0, 0);
 
-        panel.removeAll();
-        panel.add(frameWarehouse, BorderLayout.CENTER);
-        panel.repaint();
-        panel.revalidate();
+            panel.removeAll();
+            panel.add(frameWarehouse, BorderLayout.CENTER);
+            panel.repaint();
+            panel.revalidate();
+        } catch (SQLException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
