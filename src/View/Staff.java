@@ -19,13 +19,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+import com.toedter.calendar.JDateChooser;
+import java.text.ParseException;
+
+
 
 /**
  *
  * @author ADMIN
  */
 public class Staff extends javax.swing.JPanel {
-    
     DefaultTableModel model;
     public StaffDAO nhanvienDAO = new StaffDAO();
     final String manager = "+admin";
@@ -39,7 +42,7 @@ public class Staff extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(this, "them tuoi khong thanh cong");
         return false;
     }
-
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
     public Staff() throws SQLException {
         initComponents();
         model = (DefaultTableModel) tbnhanvien.getModel();
@@ -50,8 +53,7 @@ public class Staff extends javax.swing.JPanel {
         btxoa.setVisible(false);
         btload.setVisible(false);
         passwordfield.setBounds(280, 260, 100, 20);
-//        this.add(passwordfield);
-        passwordfield.setEchoChar('*');
+        
     }
     
     private void loadDataToTable() throws SQLException {
@@ -65,7 +67,7 @@ public class Staff extends javax.swing.JPanel {
                     Date ngaysinh = rs.getDate("ngaysinh");
 //                    LocalDate ngaysinh1 = LocalDate.parse((CharSequence) ngaysinh, formatter);
 //                    System.out.println(ngaysinh1);
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                    
                     String ngaysinh1 = sdf.format(ngaysinh);
                     model.addRow(new Object[]{
                         rs.getInt("staff_id"),
@@ -89,7 +91,7 @@ public class Staff extends javax.swing.JPanel {
 
     private void clearFields() {
         txtmanhanvien.setText("");
-        txttuoi.setText("");
+        txttuoi.setDate(null);
         txtemail.setText("");
         txtphone.setText("");
     }
@@ -102,7 +104,6 @@ public class Staff extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         txtmanhanvien = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        txttuoi = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtemail = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -122,6 +123,7 @@ public class Staff extends javax.swing.JPanel {
         jRadioButton2 = new javax.swing.JRadioButton();
         jLabel8 = new javax.swing.JLabel();
         txtcccd = new javax.swing.JTextField();
+        txttuoi = new com.toedter.calendar.JDateChooser();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 51, 51));
@@ -136,12 +138,6 @@ public class Staff extends javax.swing.JPanel {
         });
 
         jLabel3.setText("Ngày Sinh:");
-
-        txttuoi.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txttuoiActionPerformed(evt);
-            }
-        });
 
         jLabel4.setText("nhập email:");
 
@@ -235,6 +231,8 @@ public class Staff extends javax.swing.JPanel {
 
         jLabel8.setText("CCCD:");
 
+        txttuoi.setDateFormatString("dd-MM-yyyy");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -278,13 +276,13 @@ public class Staff extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txttuoi, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addComponent(txttuoi, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(txtten, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 544, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jRadioButton1, javax.swing.GroupLayout.Alignment.LEADING)
@@ -323,19 +321,19 @@ public class Staff extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btxoa)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(34, 34, 34)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(txttuoi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(18, 18, 18)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(txtemail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel4)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
-                            .addComponent(txtten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(txtten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(14, 14, 14)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(19, 19, 19)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(txtemail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4)))
+                            .addComponent(txttuoi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
@@ -358,22 +356,6 @@ public class Staff extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txttuoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txttuoiActionPerformed
-        // TODO add your handling code here:
-        String ngaysinh1 = txttuoi.getText();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        formatter = formatter.withLocale(Locale.US);
-        try {
-            LocalDate ngaysinh = LocalDate.parse(ngaysinh1, formatter);
-            LocalDate now = LocalDate.now();
-            long tuoi = ChronoUnit.YEARS.between(ngaysinh, now);
-            System.out.println(tuoi);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }//GEN-LAST:event_txttuoiActionPerformed
-
     private void txtemailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtemailActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtemailActionPerformed
@@ -384,15 +366,16 @@ public class Staff extends javax.swing.JPanel {
 
     private void btthemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btthemActionPerformed
         try {
-            String ngaysinh1 = txttuoi.getText();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-//            formatter = formatter.withLocale(Locale.US);
+            java.util.Date date =  txttuoi.getDate(); // Lấy đối tượng java.util.Date
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        String ngaysinhStr = sdf.format(date);
 
-            LocalDate ngaysinh = LocalDate.parse(ngaysinh1, formatter);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate ngaysinh = LocalDate.parse(ngaysinhStr, formatter);
 
-            LocalDate now = LocalDate.now();
-            long tuoi = ChronoUnit.YEARS.between(ngaysinh, now);
-            System.out.println(tuoi);
+        LocalDate now = LocalDate.now();
+        long tuoi = ChronoUnit.YEARS.between(ngaysinh, now);
+            
             String identitycard = txtcccd.getText().trim();
             String regex = "^[0-9]{12}$";
             String regexphone = "^[0-9]{9,10}$";
@@ -445,8 +428,17 @@ public class Staff extends javax.swing.JPanel {
 
     private void btsuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btsuaActionPerformed
         try {
+            java.util.Date date =  txttuoi.getDate(); // Lấy đối tượng java.util.Date
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        String ngaysinhStr = sdf.format(date);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate ngaysinh = LocalDate.parse(ngaysinhStr, formatter);
+
+        LocalDate now = LocalDate.now();
+        int age = (int) ChronoUnit.YEARS.between(ngaysinh, now);
+        
             int staffId = Integer.parseInt(txtmanhanvien.getText().trim());
-            int age = Integer.parseInt(txttuoi.getText().trim());
             String email = txtemail.getText().trim();
             String phone = txtphone.getText().trim();
             if (email.length() > 100 || phone.length() > 10) {
@@ -478,10 +470,16 @@ public class Staff extends javax.swing.JPanel {
 
     private void tbnhanvienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbnhanvienMouseClicked
         int selectedRow = tbnhanvien.getSelectedRow();
+        String dateString = model.getValueAt(selectedRow, 2).toString();
         if (selectedRow >= 0) {
             txtmanhanvien.setText(model.getValueAt(selectedRow, 0).toString());
             txtten.setText(model.getValueAt(selectedRow, 1).toString());
-            txttuoi.setText(model.getValueAt(selectedRow, 2).toString());
+            try {
+                java.util.Date date = sdf.parse(dateString);
+                txttuoi.setDate(date);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             txtemail.setText(model.getValueAt(selectedRow, 4).toString());
             txtphone.setText(model.getValueAt(selectedRow, 5).toString());
             txtcccd.setText(model.getValueAt(selectedRow, 6).toString());
@@ -574,6 +572,6 @@ public class Staff extends javax.swing.JPanel {
     private javax.swing.JTextField txtpassword;
     private javax.swing.JTextField txtphone;
     private javax.swing.JTextField txtten;
-    private javax.swing.JTextField txttuoi;
+    private com.toedter.calendar.JDateChooser txttuoi;
     // End of variables declaration//GEN-END:variables
 }

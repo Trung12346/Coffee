@@ -23,5 +23,10 @@ public class VoucherDataSet {
         this.productId = productId;
         this.newPrice = newPrice;
     }
+
+    public VoucherDataSet(Date endDate, int productId) {
+        this.endDate = endDate;
+        this.productId = productId;
+    }
     
 }

@@ -1,0 +1,386 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package test;
+
+import Model.JSON;
+import Model.MembershipDataSet;
+import Model.ProductDataSet;
+import Model.TransactionDataSet;
+import Model.VoucherDataSet;
+import Service.ViewTransactionDAO;
+import Service.dbConnection;
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import javax.swing.JOptionPane;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+/**
+ *
+ * @author maith
+ */
+public class ViewTransaction extends javax.swing.JFrame {
+
+    ViewTransactionDAO vtdao = new ViewTransactionDAO();
+
+    /**
+     * Creates new form NewJFrame
+     */
+    DefaultTableModel model;
+
+    public ViewTransaction() {
+        initComponents();
+        model = (DefaultTableModel) tbldoanhthu.getModel();
+        loaddata(vtdao.Loaddata());
+    }
+
+    public void loaddata(ResultSet rs) {
+        model.setRowCount(0);
+        try {
+            int rowCount = 0;
+            while (rs.next()) {
+                String productIds = rs.getString("product_ids");
+                String voucherIds = rs.getString("voucher_ids");
+
+                System.out.println("Debug - Processing row: receipt_id = " + rs.getInt("receipt_id")
+                        + ", product_ids = [" + productIds + "], voucher_ids = [" + voucherIds + "]");
+
+                MembershipDataSet mds = new MembershipDataSet();
+                float membershipDiscount = 0;
+                try {
+                    mds = vtdao.getMembershipById(rs.getInt("membership_id"));
+                    membershipDiscount = mds.discount;
+                } catch (Exception ex) {
+                    System.out.println("Debug - Error fetching membership: " + ex.getMessage());
+                }
+
+                float total = 0;
+                float totalAfterVoucher = 0;
+
+                if (productIds != null && !productIds.equals("0")) {
+                    String[] productIdArray = productIds.split(", ");
+                    for (String productId : productIdArray) {
+                        try {
+                            int prodId = Integer.parseInt(productId.trim());
+                            float productPrice = getProductPrice(prodId);
+                            float voucherPrice = getVoucherPrice(prodId, voucherIds);
+                            total += productPrice;
+                            totalAfterVoucher += (voucherPrice != -1 ? voucherPrice : productPrice);
+                        } catch (NumberFormatException ex) {
+                            System.out.println("Debug - Invalid product ID: " + productId);
+                        }
+                    }
+                }
+
+                totalAfterVoucher = (totalAfterVoucher / 100) * (100 - membershipDiscount);
+
+                model.addRow(new Object[]{
+                    rs.getInt("receipt_id"),
+                    rs.getTimestamp("receipt_date").toString(),
+                    productIds,
+                    voucherIds,
+                    rs.getInt("membership_id"),
+                    rs.getInt("staff_id"),
+                    (total - totalAfterVoucher) * -1,
+                    totalAfterVoucher
+                });
+                rowCount++;
+            }
+            System.out.println("Debug - Total rows loaded: " + rowCount);
+            if (rowCount == 0) {
+                System.out.println("Debug - No data loaded into table");
+            }
+        } catch (SQLException e) {
+            System.out.println("Debug - Error in loaddata: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu: " + e.getMessage());
+        }
+    }
+
+// Phương thức giả để lấy giá sản phẩm (cần triển khai thực tế)
+    private float getProductPrice(int productId) throws SQLException {
+        // Truy vấn bảng product để lấy product_price
+        try (Connection conn = dbConnection.connect(); PreparedStatement ps = conn.prepareStatement("SELECT product_price FROM product WHERE product_id = ?")) {
+            ps.setInt(1, productId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getFloat("product_price");
+                } else {
+                    System.out.println("Debug - Product not found for ID: " + productId);
+                    throw new SQLException("Không tìm thấy sản phẩm với ID: " + productId);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Debug - Error in getProductPrice: " + e.getMessage());
+            throw e;
+        }
+    }
+
+// Phương thức giả để lấy giá sau voucher (cần triển khai thực tế)
+    private float getVoucherPrice(int productId, String voucherIds) {
+        if (voucherIds == null || voucherIds.trim().isEmpty() || voucherIds.equals("0")) {
+            return -1;
+        }
+        String[] voucherIdArray = voucherIds.split(",");
+        String placeholders = String.join(",", Collections.nCopies(voucherIdArray.length, "?"));
+        String query = "SELECT new_product_price FROM voucher WHERE product_id = ? AND voucher_id IN (" + placeholders + ")";
+        try (Connection conn = dbConnection.connect(); PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, productId);
+            for (int i = 0; i < voucherIdArray.length; i++) {
+                ps.setInt(i + 2, Integer.parseInt(voucherIdArray[i].trim()));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getFloat("new_product_price");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Debug - Error in getVoucherPrice: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+	setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbldoanhthu = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jdtstart = new datechooser.beans.DateChooserCombo();
+        jdtend = new datechooser.beans.DateChooserCombo();
+
+        jLabel1.setText("Ngày bắt đầu:");
+
+        jLabel2.setText("Ngày Kết thúc:");
+
+        tbldoanhthu.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Mã Hóa đơn", "Ngày xuất hóa đơn", "Products", "Vouchers", "Mã hội viên", "Nhân viên tạo", "Chiết khấu", "Thành tiền"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Float.class, java.lang.Float.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tbldoanhthu);
+
+        jButton1.setText("Xem Doanh Thu");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Reset ");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jdtend, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(132, 132, 132)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jdtstart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(151, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(58, 58, 58)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jdtstart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jdtend, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(22, 22, 22)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE))
+        );
+	pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+////   model.setRowCount(0); // Xóa bảng trước khi tải dữ liệu
+//        java.util.Date startDateObj = jdtstart.getDate;
+//        java.util.Date endDateObj = jdtend.getDate();
+//        System.out.println("Start: " + jdtstart.getDate());
+//        System.out.println("End: " + jdtend.getDate());
+//
+//// Kiểm tra ngày null
+//        if (startDateObj == null || endDateObj == null) {
+//            JOptionPane.showMessageDialog(null, "Vui lòng chọn cả ngày bắt đầu và kết thúc.");
+//            return;
+//        }
+//
+//// Log sau khi đã chắc chắn không null
+//        System.out.println("Debug - Start date: " + startDateObj.toString());
+//        System.out.println("Debug - End date: " + endDateObj.toString());
+//
+//// Kiểm tra ngày kết thúc trước ngày bắt đầu
+//        if (endDateObj.before(startDateObj)) {
+//            JOptionPane.showMessageDialog(this, "Ngày kết thúc không được trước ngày bắt đầu!");
+//            return;
+//        }
+//
+//// Xử lý dữ liệu
+//        try {
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//            String startDate = sdf.format(startDateObj);
+//            String endDate = sdf.format(endDateObj);
+//
+//            System.out.println("Debug - Filtering data from " + startDate + " to " + endDate);
+//            ResultSet rs = vtdao.fillter(startDate, endDate);
+//            if (rs != null && rs.next()) {
+//                rs.beforeFirst();
+//                loaddata(rs);
+//                rs.close();
+//                JOptionPane.showMessageDialog(this, "Lọc dữ liệu thành công");
+//            } else {
+//                JOptionPane.showMessageDialog(this, "Không có dữ liệu trong khoảng thời gian đã chọn.");
+//                if (rs != null) {
+//                    rs.close();
+//                }
+//            }
+//        } catch (Exception ex) {
+//            System.out.println("Debug - Database or processing error: " + ex.getMessage());
+//            JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu: " + ex.getMessage());
+//        }
+        //lấy lịch từ jDateCombo
+        Calendar startDateCalen = jdtstart.getSelectedDate();
+        
+        //chuyển Calendar sang java.util.Date
+        java.util.Date startDateUtil = startDateCalen.getTime();
+        
+        //tạo pattern để format
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        
+        //format
+        String date = sdf.format(startDateUtil);
+        
+        System.out.println(date);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+//        // TODO add your handling code here:
+//        jdtstart.setDate(null);
+//        jdtend.setDate(null);
+//        model.setRowCount(0);
+//        try {
+//            ResultSet rs = vtdao.Loaddata();
+//            if (rs != null && rs.next()) {
+//                rs.beforeFirst();
+//                loaddata(rs);
+//                rs.close();
+//            } else {
+//                JOptionPane.showMessageDialog(this, "Không có dữ liệu để hiển thị.");
+//                if (rs != null) {
+//                    rs.close();
+//                }
+//            }
+//        } catch (Exception ex) {
+//            JOptionPane.showMessageDialog(this, "Lỗi khi tải lại dữ liệu: " + ex.getMessage());
+//        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(ViewTransaction.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(ViewTransaction.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(ViewTransaction.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(ViewTransaction.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ViewTransaction().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private datechooser.beans.DateChooserCombo jdtend;
+    private datechooser.beans.DateChooserCombo jdtstart;
+    private javax.swing.JTable tbldoanhthu;
+    // End of variables declaration//GEN-END:variables
+}

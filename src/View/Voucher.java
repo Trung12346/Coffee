@@ -3,27 +3,38 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package View;
+
+import Model.VoucherDataSet;
 import Service.VoucherDAO;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
+import com.toedter.calendar.JDateChooser;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+
 /**
  *
  * @author ADMIN
  */
 public class Voucher extends javax.swing.JPanel {
+
     VoucherDAO voucherdao = new VoucherDAO();
     /**
      * Creates new form Voucher
      */
     DefaultTableModel Model;
+    ArrayList<VoucherDataSet> validation = new ArrayList();
+
     public Voucher() {
         initComponents();
         Model = (DefaultTableModel) tblvoucher.getModel();
         loaddata();
     }
+
     public void loaddata() {
         Model.setRowCount(0);
         ResultSet rs = voucherdao.hienthi();
@@ -36,6 +47,7 @@ public class Voucher extends javax.swing.JPanel {
                     rs.getInt("product_id"),
                     rs.getFloat("new_product_price")
                 });
+                validation.add(new VoucherDataSet(rs.getDate("end_date"), rs.getInt("product_id")));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,9 +64,7 @@ public class Voucher extends javax.swing.JPanel {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        txtstartdate = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        txtenddate = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         txtprice = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -63,50 +73,14 @@ public class Voucher extends javax.swing.JPanel {
         tblvoucher = new javax.swing.JTable();
         jLabel5 = new javax.swing.JLabel();
         txtmasp = new javax.swing.JTextField();
+        txtstartdate = new com.toedter.calendar.JDateChooser();
+        txtenddate = new com.toedter.calendar.JDateChooser();
 
         jLabel1.setText("Ngày bắt đầu:");
 
-        txtstartdate.setForeground(new java.awt.Color(128, 128, 128));
-        txtstartdate.setText("dd/MM/yyyy");
-        txtstartdate.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtstartdateFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtstartdateFocusLost(evt);
-            }
-        });
-        txtstartdate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtstartdateActionPerformed(evt);
-            }
-        });
-
         jLabel2.setText("Ngày Kết Thúc:");
 
-        txtenddate.setForeground(new java.awt.Color(128, 128, 128));
-        txtenddate.setText("dd/MM/yyyy");
-        txtenddate.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtenddateFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtenddateFocusLost(evt);
-            }
-        });
-        txtenddate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtenddateActionPerformed(evt);
-            }
-        });
-
         jLabel3.setText("Giá sau khi áp dụng");
-
-        txtprice.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtpriceActionPerformed(evt);
-            }
-        });
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel4.setText("VOUCHER");
@@ -150,10 +124,13 @@ public class Voucher extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel4)
-                            .addComponent(txtstartdate, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel4))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(22, 22, 22)
+                                .addComponent(txtstartdate, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addComponent(txtprice, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -176,13 +153,14 @@ public class Voucher extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel4)
                 .addGap(29, 29, 29)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtstartdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(txtmasp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(jLabel5)
+                        .addComponent(txtmasp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtstartdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(txtenddate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
@@ -191,91 +169,61 @@ public class Voucher extends javax.swing.JPanel {
                     .addComponent(txtprice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1))
                 .addGap(70, 70, 70)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         try {
-    String startStr = txtstartdate.getText().trim();
-    String endStr = txtenddate.getText().trim();
-    int productId = Integer.parseInt(txtmasp.getText().trim());
-    float newPrice = Float.parseFloat(txtprice.getText().trim());
-    if(newPrice >= 0){
-    }else{
-    JOptionPane.showMessageDialog(this, "Gia khong hop le");
-    return;
-    }
-    // Định dạng ngày người dùng nhập: dd/MM/yyyy
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-    sdf.setLenient(false);
-
-    Timestamp start_date = new Timestamp(sdf.parse(startStr).getTime());
-    Timestamp end_date = new Timestamp(sdf.parse(endStr).getTime());
-    if(start_date.before(end_date)){
-    }else{
-        JOptionPane.showMessageDialog(this, "ngay khong hop le");
-    return;
-    }
-    boolean success = voucherdao.add(start_date, end_date, productId, newPrice);
-    if (success) {
-        JOptionPane.showMessageDialog(this, "Thêm voucher thành công!");
-        loaddata();
-    } else {
-        JOptionPane.showMessageDialog(this, "Thêm voucher thất bại!");
-    }
-} catch (Exception e) {
-    JOptionPane.showMessageDialog(this, "Lỗi nhập liệu! Hãy nhập đúng định dạng: dd/MM/yyyy và kiểm tra số liệu khác.");
-    e.printStackTrace();
+            java.util.Date startStr = txtstartdate.getDate();
+            java.util.Date endStr = txtenddate.getDate();
+            int productId = Integer.parseInt(txtmasp.getText().trim());
+            float newPrice = Float.parseFloat(txtprice.getText().trim());
+            if (newPrice >= 0) {
+            } else {
+                JOptionPane.showMessageDialog(this, "Gia khong hop le");
+                return;
+            }
+            // Định dạng ngày người dùng nhập: dd/MM/yyyy
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            sdf.setLenient(false);
+            java.util.Date currentDateUtil = new Date();
+            Timestamp currentDate = new Timestamp(currentDateUtil.getTime());
+            Timestamp start_date = new Timestamp(startStr.getTime());
+            Timestamp end_date = new Timestamp(endStr.getTime());
+            if (start_date.before(end_date) && currentDate.before(start_date)) {
+            } else {
+                JOptionPane.showMessageDialog(this, "ngay khong hop le");
+                return;
+            }
+            for(int i = 0; i < validation.size(); i++) {
+                if(productId == validation.get(i).productId) {
+                    if(start_date.before(validation.get(i).endDate)) {
+                        JOptionPane.showMessageDialog(this, "voucher cho san pham nay chua het han");
+                        return;
+                    }
+                }
+            }
+            
+            boolean success = voucherdao.add(start_date, end_date, productId, newPrice);
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Thêm voucher thành công!");
+                loaddata();
+            } else {
+                JOptionPane.showMessageDialog(this, "Thêm voucher thất bại!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi nhập liệu! Hãy nhập đúng định dạng: dd/MM/yyyy và kiểm tra số liệu khác.");
+            e.printStackTrace();
         }
 
-        
+
     }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void txtstartdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtstartdateActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtstartdateActionPerformed
-
-    private void txtstartdateFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtstartdateFocusGained
-        // TODO add your handling code here:
-        if(txtstartdate.getText().equals("dd/MM/yyyy")) {
-            txtstartdate.setForeground(Color.BLACK);
-            txtstartdate.setText("");
-        }
-    }//GEN-LAST:event_txtstartdateFocusGained
-
-    private void txtstartdateFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtstartdateFocusLost
-        // TODO add your handling code here:
-        if(txtstartdate.getText().equals("")) {
-            txtstartdate.setForeground(Color.GRAY);
-            txtstartdate.setText("dd/MM/yyyy");
-        }
-    }//GEN-LAST:event_txtstartdateFocusLost
-
-    private void txtenddateFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtenddateFocusGained
-        // TODO add your handling code here:
-        if(txtenddate.getText().equals("dd/MM/yyyy")) {
-            txtenddate.setForeground(Color.BLACK);
-            txtenddate.setText("");
-        }
-    }//GEN-LAST:event_txtenddateFocusGained
-
-    private void txtenddateFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtenddateFocusLost
-        // TODO add your handling code here:
-        if(txtenddate.getText().equals("")) {
-            txtenddate.setForeground(Color.GRAY);
-            txtenddate.setText("dd/MM/yyyy");
-        }
-    }//GEN-LAST:event_txtenddateFocusLost
-
-    private void txtenddateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtenddateActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtenddateActionPerformed
 
     private void txtpriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtpriceActionPerformed
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_txtpriceActionPerformed
 
     /**
@@ -322,9 +270,9 @@ public class Voucher extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tblvoucher;
-    private javax.swing.JTextField txtenddate;
+    private com.toedter.calendar.JDateChooser txtenddate;
     private javax.swing.JTextField txtmasp;
     private javax.swing.JTextField txtprice;
-    private javax.swing.JTextField txtstartdate;
+    private com.toedter.calendar.JDateChooser txtstartdate;
     // End of variables declaration//GEN-END:variables
 }
