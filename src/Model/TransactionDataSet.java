@@ -26,6 +26,7 @@ public class TransactionDataSet {
     public String paymentState;
     public float amount;
     public String note;
+    public int pointUsed;
 
     public TransactionDataSet(int reciptId, Timestamp reciptDate, ArrayList<ProductDataSet> products, ArrayList<VoucherDataSet> vouchers, MembershipDataSet membership) {
         this.reciptId = reciptId;
@@ -35,7 +36,7 @@ public class TransactionDataSet {
         this.membership = membership;
     }
 
-    public TransactionDataSet(Timestamp reciptDate, ArrayList<ProductDataSet> products, ArrayList<VoucherDataSet> vouchers, MembershipDataSet membership, int staffId, float total, boolean usePoint, float replenishPoint, String paymentMethod, String paymentState, float amount, String note) {
+    public TransactionDataSet(Timestamp reciptDate, ArrayList<ProductDataSet> products, ArrayList<VoucherDataSet> vouchers, MembershipDataSet membership, int staffId, float total, boolean usePoint, float replenishPoint, String paymentMethod, String paymentState, float amount, String note, int pointUsed) {
         this.reciptDate = reciptDate;
         this.products = products;
         this.vouchers = vouchers;
@@ -48,6 +49,7 @@ public class TransactionDataSet {
         this.paymentState = paymentState;
         this.amount = amount;
         this.note = note;
+        this.pointUsed = pointUsed;
     }
 
     public TransactionDataSet(Timestamp reciptDate, ArrayList<ProductDataSet> products, ArrayList<VoucherDataSet> vouchers) {
@@ -56,7 +58,7 @@ public class TransactionDataSet {
         this.vouchers = vouchers;
     }
 
-    public TransactionDataSet(int reciptId, Timestamp reciptDate, ArrayList<ProductDataSet> products, ArrayList<VoucherDataSet> vouchers, MembershipDataSet membership, int staffId, float total, boolean usePoint, float replenishPoint, String paymentMethod, String paymentState, float amount, String note) {
+    public TransactionDataSet(int reciptId, Timestamp reciptDate, ArrayList<ProductDataSet> products, ArrayList<VoucherDataSet> vouchers, MembershipDataSet membership, int staffId, float total, boolean usePoint, float replenishPoint, String paymentMethod, String paymentState, float amount, String note, int pointUsed) {
         this.reciptId = reciptId;
         this.reciptDate = reciptDate;
         this.products = products;
@@ -70,5 +72,6 @@ public class TransactionDataSet {
         this.paymentState = paymentState;
         this.amount = amount;
         this.note = note;
+        this.pointUsed = pointUsed;
     }
 }
