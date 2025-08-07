@@ -279,7 +279,7 @@ public class TransactionDAO {
     }
 
     public int howManyCraftable(int productId) {
-        String query_1 = String.format("SELECT rd.ingredient_id, ready_quantity, quantity FROM (SELECT ingredient_id, SUM(quantity) AS ready_quantity FROM (SELECT product_id, p_i.ingredient_id, ingredient_label, quantity AS r_quantity, unit FROM (SELECT * FROM product_ingredients WHERE product_id = %d) p_i INNER JOIN ingredients i ON p_i.ingredient_id = i.ingredient_id) nd INNER JOIN storage ON storage.item = nd.ingredient_id GROUP BY ingredient_id) AS rd INNER JOIN product_ingredients ON rd.ingredient_id = product_ingredients.ingredient_id", productId);
+        String query_1 = String.format("SELECT product_id, ingredient_id, quantity, ready_quantity  FROM (SELECT * FROM product_ingredients WHERE product_id = %d) p INNER JOIN (SELECT item, SUM(quantity) AS ready_quantity FROM storage GROUP BY item) s ON p.ingredient_id = s.item ", productId);
         System.out.println(query_1);
         Statement stm_1;
         int smallestAcquirable = -1;
@@ -310,7 +310,7 @@ public class TransactionDAO {
         Locale.setDefault(Locale.US);
         Statement stm;
 
-        String query = String.format("SELECT product_id, rd.ingredient_id, ready_quantity, quantity FROM (SELECT ingredient_id, SUM(quantity) AS ready_quantity FROM (SELECT product_id, p_i.ingredient_id, ingredient_label, quantity AS r_quantity, unit FROM (SELECT * FROM product_ingredients WHERE product_id = %d) p_i INNER JOIN ingredients i ON p_i.ingredient_id = i.ingredient_id) nd INNER JOIN storage ON storage.item = nd.ingredient_id GROUP BY ingredient_id) AS rd INNER JOIN product_ingredients ON rd.ingredient_id = product_ingredients.ingredient_id", productId);
+        String query = String.format("SELECT product_id, ingredient_id, quantity, ready_quantity  FROM (SELECT * FROM product_ingredients WHERE product_id = %d) p INNER JOIN (SELECT item, SUM(quantity) AS ready_quantity FROM storage GROUP BY item) s ON p.ingredient_id = s.item ", productId);
         stm = conn.createStatement();
         ResultSet rs = stm.executeQuery(query);
         while (rs.next()) {
@@ -321,7 +321,7 @@ public class TransactionDAO {
     }
     public void setReceiptCompleted(int receiptId) throws SQLException {
         Statement stm = conn.createStatement();
-        String query = String.format("UPDATE receipt SET paymentState = 'Đã thanh toán' WHERE receipt_id = %d", receiptId);
+        String query = String.format("UPDATE receipt SET payment_state = N'Đã thanh toán' WHERE receipt_id = %d", receiptId);
         stm.executeUpdate(query);
     }
 }

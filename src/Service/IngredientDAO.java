@@ -69,7 +69,7 @@ public class IngredientDAO {
             System.out.println(rs.getInt("product_id"));
         }
         products.forEach(product -> {
-            String query_1 = String.format("SELECT rd.ingredient_id, ready_quantity, quantity FROM (SELECT ingredient_id, SUM(quantity) AS ready_quantity FROM (SELECT product_id, p_i.ingredient_id, ingredient_label, quantity AS r_quantity, unit FROM (SELECT * FROM product_ingredients WHERE product_id = %d) p_i INNER JOIN ingredients i ON p_i.ingredient_id = i.ingredient_id) nd INNER JOIN storage ON storage.item = nd.ingredient_id GROUP BY ingredient_id) AS rd INNER JOIN product_ingredients ON rd.ingredient_id = product_ingredients.ingredient_id", product.productId);
+            String query_1 = String.format("SELECT product_id, ingredient_id, quantity, ready_quantity  FROM (SELECT * FROM product_ingredients WHERE product_id = %d) p INNER JOIN (SELECT item, SUM(quantity) AS ready_quantity FROM storage GROUP BY item) s ON p.ingredient_id = s.item ", product.productId);
             System.out.println(query_1);
             Statement stm_1;
             try {

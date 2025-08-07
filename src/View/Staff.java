@@ -22,18 +22,18 @@ import javax.swing.JPasswordField;
 import com.toedter.calendar.JDateChooser;
 import java.text.ParseException;
 
-
-
 /**
  *
  * @author ADMIN
  */
 public class Staff extends javax.swing.JPanel {
+
     DefaultTableModel model;
     public StaffDAO nhanvienDAO = new StaffDAO();
     final String manager = "+admin";
     final String staff = "+membership +report +createTransaction +warehouseLog";
     JPasswordField passwordfield = new JPasswordField(20);
+
     public boolean isvalid(long age) {
         if (age > 16) {
             JOptionPane.showMessageDialog(this, "tuoi thanh cong");
@@ -43,6 +43,7 @@ public class Staff extends javax.swing.JPanel {
         return false;
     }
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
     public Staff() throws SQLException {
         initComponents();
         model = (DefaultTableModel) tbnhanvien.getModel();
@@ -53,9 +54,9 @@ public class Staff extends javax.swing.JPanel {
         btxoa.setVisible(false);
         btload.setVisible(false);
         passwordfield.setBounds(280, 260, 100, 20);
-        
+
     }
-    
+
     private void loadDataToTable() throws SQLException {
         model.setRowCount(0); // Xóa dữ liệu cũ
         ResultSet rs = nhanvienDAO.loaddata();
@@ -67,7 +68,7 @@ public class Staff extends javax.swing.JPanel {
                     Date ngaysinh = rs.getDate("ngaysinh");
 //                    LocalDate ngaysinh1 = LocalDate.parse((CharSequence) ngaysinh, formatter);
 //                    System.out.println(ngaysinh1);
-                    
+
                     String ngaysinh1 = sdf.format(ngaysinh);
                     model.addRow(new Object[]{
                         rs.getInt("staff_id"),
@@ -79,7 +80,7 @@ public class Staff extends javax.swing.JPanel {
                         rs.getString("identitycard")
                     });
                 }
-                rs.close(); 
+                rs.close();
             } else {
                 javax.swing.JOptionPane.showMessageDialog(this, "Không thể tải dữ liệu!");
             }
@@ -95,6 +96,7 @@ public class Staff extends javax.swing.JPanel {
         txtemail.setText("");
         txtphone.setText("");
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -231,8 +233,6 @@ public class Staff extends javax.swing.JPanel {
 
         jLabel8.setText("CCCD:");
 
-        txttuoi.setDateFormatString("dd-MM-yyyy");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -273,16 +273,16 @@ public class Staff extends javax.swing.JPanel {
                                     .addComponent(btload, javax.swing.GroupLayout.Alignment.TRAILING))))
                         .addGap(91, 91, 91))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel3)
-                                .addGap(18, 18, 18)
-                                .addComponent(txttuoi, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txttuoi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(txtten, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 544, Short.MAX_VALUE))
+                        .addGap(0, 552, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jRadioButton1, javax.swing.GroupLayout.Alignment.LEADING)
@@ -325,15 +325,14 @@ public class Staff extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
                             .addComponent(txtten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(14, 14, 14)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(19, 19, 19)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(txtemail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel4)))
-                            .addComponent(txttuoi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(11, 11, 11)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txttuoi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(19, 19, 19)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtemail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
@@ -366,16 +365,16 @@ public class Staff extends javax.swing.JPanel {
 
     private void btthemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btthemActionPerformed
         try {
-            java.util.Date date =  txttuoi.getDate(); // Lấy đối tượng java.util.Date
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        String ngaysinhStr = sdf.format(date);
+            java.util.Date date = txttuoi.getDate(); // Lấy đối tượng java.util.Date
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            String ngaysinhStr = sdf.format(date);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        LocalDate ngaysinh = LocalDate.parse(ngaysinhStr, formatter);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate ngaysinh = LocalDate.parse(ngaysinhStr, formatter);
 
-        LocalDate now = LocalDate.now();
-        long tuoi = ChronoUnit.YEARS.between(ngaysinh, now);
-            
+            LocalDate now = LocalDate.now();
+            long tuoi = ChronoUnit.YEARS.between(ngaysinh, now);
+
             String identitycard = txtcccd.getText().trim();
             String regex = "^[0-9]{12}$";
             String regexphone = "^[0-9]{9,10}$";
@@ -383,11 +382,17 @@ public class Staff extends javax.swing.JPanel {
             String phone = txtphone.getText().trim();
             String name = txtten.getText().trim();
             String password = txtpassword.getText();
-            if(phone.matches(regexphone)){
-            JOptionPane.showMessageDialog(this, "sdt hop le");
-            }else{
-            JOptionPane.showMessageDialog(this, "sdt khong hop le");
-            return;
+            for (int i = 0; i < tbnhanvien.getRowCount(); i++) {
+                if (identitycard.equals(model.getValueAt(i, 6).toString())) {
+                    JOptionPane.showMessageDialog(this, "Ten can cuoc cong dan ko duoc trung");
+                    return;
+                }
+            }
+            if (phone.matches(regexphone)) {
+                JOptionPane.showMessageDialog(this, "sdt hop le");
+            } else {
+                JOptionPane.showMessageDialog(this, "sdt khong hop le");
+                return;
             }
             if (identitycard.matches(regex)) {
                 JOptionPane.showMessageDialog(this, "cccd hop le");
@@ -428,16 +433,16 @@ public class Staff extends javax.swing.JPanel {
 
     private void btsuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btsuaActionPerformed
         try {
-            java.util.Date date =  txttuoi.getDate(); // Lấy đối tượng java.util.Date
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        String ngaysinhStr = sdf.format(date);
+            java.util.Date date = txttuoi.getDate(); // Lấy đối tượng java.util.Date
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            String ngaysinhStr = sdf.format(date);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        LocalDate ngaysinh = LocalDate.parse(ngaysinhStr, formatter);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate ngaysinh = LocalDate.parse(ngaysinhStr, formatter);
 
-        LocalDate now = LocalDate.now();
-        int age = (int) ChronoUnit.YEARS.between(ngaysinh, now);
-        
+            LocalDate now = LocalDate.now();
+            int age = (int) ChronoUnit.YEARS.between(ngaysinh, now);
+
             int staffId = Integer.parseInt(txtmanhanvien.getText().trim());
             String email = txtemail.getText().trim();
             String phone = txtphone.getText().trim();
@@ -455,7 +460,7 @@ public class Staff extends javax.swing.JPanel {
             }
         } catch (NumberFormatException e) {
             javax.swing.JOptionPane.showMessageDialog(this, "ID và tuổi phải là số nguyên!");
-       
+
         } catch (SQLException ex) {
             Logger.getLogger(Staff.class.getName()).log(Level.SEVERE, null, ex);
         }    }//GEN-LAST:event_btsuaActionPerformed
@@ -505,7 +510,7 @@ public class Staff extends javax.swing.JPanel {
 //            javax.swing.JOptionPane.showMessageDialog(this, "ID phải là số nguyên!");
 //        }
     }//GEN-LAST:event_btxoaActionPerformed
-    
+
     private void txtpasswordInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_txtpasswordInputMethodTextChanged
         // TODO add your handling code here:
     }//GEN-LAST:event_txtpasswordInputMethodTextChanged

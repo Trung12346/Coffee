@@ -54,6 +54,7 @@ public class CreateTransaction extends javax.swing.JPanel {
     DefaultTableModel Model_1;
     DefaultTableModel Model_2;
     DefaultTableModel Model_3;
+
     ArrayList<Table2> Table2Rows = new ArrayList();
     ArrayList<TransactionDataSet> awaitPayments = new ArrayList();
 
@@ -79,7 +80,7 @@ public class CreateTransaction extends javax.swing.JPanel {
 //                System.out.println("Column: " + tcl.getColumn());
 //                System.out.println("Old   : " + tcl.getOldValue());
 //                System.out.println("New   : " + tcl.getNewValue());
-                if(tcl.getColumn() == 2) {
+                if (tcl.getColumn() == 2) {
                     Table2Rows.get(tcl.getRow() - 1).quantity = tcl.getNewValue().toString();
                 }
             }
@@ -90,7 +91,7 @@ public class CreateTransaction extends javax.swing.JPanel {
 
     public void loadTable_1() throws SQLException {
         ResultSet rs = transactDAO.getProducts();
-        Model_1.setRowCount(1);
+        Model_1.setRowCount(0);
         while (rs.next()) {
             Model_1.addRow(new Object[]{
                 String.valueOf(rs.getInt("product_id")),
@@ -102,7 +103,7 @@ public class CreateTransaction extends javax.swing.JPanel {
     }
 
     public void loadTable_2(ArrayList<Table2> rows) {
-        Model_2.setRowCount(1);
+        Model_2.setRowCount(0);
         rows.forEach(row -> {
             Model_2.addRow(new Object[]{
                 //row.id,
@@ -126,11 +127,10 @@ public class CreateTransaction extends javax.swing.JPanel {
             productIds.add(Integer.parseInt(row.id));
             quantities.add(Integer.parseInt(row.quantity));
         });
-        
+
 //        for (int i = 1; i < jTable2.getRowCount(); i++) {
 //            quantities.add(jTable2.getValueAt(i, 3));
 //        }
-
         AtomicInteger index = new AtomicInteger();
         productIds.forEach(productId -> {
             try {
@@ -319,7 +319,7 @@ public class CreateTransaction extends javax.swing.JPanel {
             for (int i = 1; i <= Math.ceil((float) note.length() / (columnSize * 2)); i++) {
                 System.out.println("adding row to receipt");
                 String secondStr;
-                if(Math.ceil((float) note.length() / columnSize) % 2 == 0 && i != Math.ceil((float) note.length() / (columnSize * 2))) {
+                if (Math.ceil((float) note.length() / columnSize) % 2 == 0 && i != Math.ceil((float) note.length() / (columnSize * 2))) {
                     secondStr = note.substring(columnSize * 2 * i - 20, columnSize * 2 * i);
                 } else {
                     secondStr = "";
@@ -346,14 +346,15 @@ public class CreateTransaction extends javax.swing.JPanel {
 //        System.out.println(sdf.format(test));
         System.out.println(JSON.StringifyJSON(transaction));
 
-        products.forEach(product -> {
-            try {
-                transactDAO.consumeMaterial(product.productId, product.quantity);
-            } catch (SQLException ex) {
-                Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
+//        products.forEach(product -> {
+//            try {
+//                transactDAO.consumeMaterial(product.productId, product.quantity);
+//            } catch (SQLException ex) {
+//                Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        });
         awaitPayments.add(transaction);
+        
         return JSON.StringifyJSON(transaction);
     }
 
@@ -520,6 +521,12 @@ public class CreateTransaction extends javax.swing.JPanel {
 
         jLabel5.setText("Đang có:");
 
+        jTextField1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextField1FocusLost(evt);
+            }
+        });
+
         jTextArea2.setColumns(20);
         jTextArea2.setRows(5);
         jScrollPane8.setViewportView(jTextArea2);
@@ -535,9 +542,7 @@ public class CreateTransaction extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel11)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel11)
                             .addComponent(jScrollPane8)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -723,10 +728,12 @@ public class CreateTransaction extends javax.swing.JPanel {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         int selectedRow = jTable1.getSelectedRow();
-        if (selectedRow >= 1) {
+        if (selectedRow >= 0) {
             ArrayList products = new ArrayList();
-            for (int i = 1; i < jTable2.getRowCount(); i++) {
-                products.add(jTable2.getValueAt(i, 0));
+            for (int i = 0; i < Table2Rows.size(); i++) {
+                products.add(Table2Rows.get(i).id);
+                System.out.println("id");
+                System.out.println(Table2Rows.get(i).id);
             }
 
             try {
@@ -765,6 +772,7 @@ public class CreateTransaction extends javax.swing.JPanel {
         try {
             // TODO add your handling code here:
             transactDAO.createTransaction(requestRecipt());
+            awaitPayments.get(awaitPayments.size() - 1).reciptId = TransactionDAO.lastRecordGlb;
             Model_3.setRowCount(0);
             awaitPayments.forEach(row -> {
                 String products = "";
@@ -777,8 +785,20 @@ public class CreateTransaction extends javax.swing.JPanel {
 
                 }
 
-                Model_3.addRow(new Object[]{TransactionDAO.lastRecordGlb, products, row.amount});
+                Model_3.addRow(new Object[]{row.reciptId, products, row.amount});
             });
+            ArrayList<ProductDataSet> products = awaitPayments.get(awaitPayments.size() - 1).products;
+            products.forEach(product -> {
+                try {
+                    transactDAO.consumeMaterial(product.productId, product.quantity);
+                } catch (SQLException ex) {
+                    Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+
+            Table2Rows = new ArrayList();
+            loadTable_1();
+            loadTable_2(Table2Rows);
         } catch (JsonProcessingException | SQLException | FileNotFoundException ex) {
             Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
@@ -820,23 +840,40 @@ public class CreateTransaction extends javax.swing.JPanel {
         // TODO add your handling code here:
         try {
             float customerPaid = Float.parseFloat(jTextField2.getText());
-            
+
             float amount = awaitPayments.get(jTable3.getSelectedRow()).amount;
             float changes = 0;
-            if(customerPaid < amount) {
+            if (customerPaid < amount) {
                 throw new Exception();
             } else {
                 changes = customerPaid - amount;
             }
             jLabel9.setText(String.format("%,.0f VND", changes));
+            System.out.println(awaitPayments.get(jTable3.getSelectedRow()).reciptId);
             transactDAO.setReceiptCompleted(awaitPayments.get(jTable3.getSelectedRow()).reciptId);
-            
-        } catch(Exception ex) {
+
+        } catch (Exception ex) {
             System.out.println(ex);
         }
-        
-        
+
+
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jTextField1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField1FocusLost
+        // TODO add your handling code here:
+        JSONObject jo;
+        try {
+            jo = JSON.parseJSON(transactDAO.searchMembership(jTextField1.getText()));
+            int point = jo.getInt("point");
+            jLabel6.setText(String.format("%d điểm", point));
+        } catch (SQLException ex) {
+            Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
+    }//GEN-LAST:event_jTextField1FocusLost
 
     /**
      * @param args the command line arguments

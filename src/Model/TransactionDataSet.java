@@ -3,13 +3,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Model;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
+
 /**
  *
  * @author maith
  */
 public class TransactionDataSet {
+
     public int reciptId;
     public Timestamp reciptDate;
     public ArrayList<ProductDataSet> products;
@@ -52,5 +55,20 @@ public class TransactionDataSet {
         this.products = products;
         this.vouchers = vouchers;
     }
-    
+
+    public TransactionDataSet(int reciptId, Timestamp reciptDate, ArrayList<ProductDataSet> products, ArrayList<VoucherDataSet> vouchers, MembershipDataSet membership, int staffId, float total, boolean usePoint, float replenishPoint, String paymentMethod, String paymentState, float amount, String note) {
+        this.reciptId = reciptId;
+        this.reciptDate = reciptDate;
+        this.products = products;
+        this.vouchers = vouchers;
+        this.membership = membership;
+        this.staffId = staffId;
+        this.total = total;
+        this.usePoint = usePoint;
+        this.replenishPoint = replenishPoint;
+        this.paymentMethod = paymentMethod;
+        this.paymentState = paymentState;
+        this.amount = amount;
+        this.note = note;
+    }
 }
