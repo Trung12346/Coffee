@@ -362,7 +362,7 @@ public class Staff extends javax.swing.JPanel {
     private void txtphoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtphoneActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtphoneActionPerformed
-
+ 
     private void btthemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btthemActionPerformed
         try {
             java.util.Date date = txttuoi.getDate(); // Lấy đối tượng java.util.Date
@@ -382,27 +382,22 @@ public class Staff extends javax.swing.JPanel {
             String phone = txtphone.getText().trim();
             String name = txtten.getText().trim();
             String password = txtpassword.getText();
+            
             for (int i = 0; i < tbnhanvien.getRowCount(); i++) {
-                if (identitycard.equals(model.getValueAt(i, 6).toString())) {
-                    JOptionPane.showMessageDialog(this, "Ten can cuoc cong dan ko duoc trung");
+                if (identitycard.equals(model.getValueAt(i, 6).toString())||phone.equals(model.getValueAt(i, 5))) {
+                    JOptionPane.showMessageDialog(this, "Ten can cuoc cong dan hoac sdt ko duoc trung");
                     return;
                 }
             }
-            if (phone.matches(regexphone)) {
-                JOptionPane.showMessageDialog(this, "sdt hop le");
-            } else {
+            if (!phone.matches(regexphone)) {
                 JOptionPane.showMessageDialog(this, "sdt khong hop le");
                 return;
             }
-            if (identitycard.matches(regex)) {
-                JOptionPane.showMessageDialog(this, "cccd hop le");
-            } else {
+            if (!identitycard.matches(regex)) {
                 JOptionPane.showMessageDialog(this, "cccd khong hop le");
                 return;
             }
-            if (tuoi > 16) {
-                JOptionPane.showMessageDialog(this, "Tuoi hop le");
-            } else {
+            if (tuoi < 16) {
                 JOptionPane.showMessageDialog(this, "Tuoi khong hop le");
                 return;
             }

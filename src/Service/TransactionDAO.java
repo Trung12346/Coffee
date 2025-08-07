@@ -484,6 +484,7 @@ public class TransactionDAO {
             System.out.println("HEY");
             System.out.println(mds.id);
             TransactionDataSet transaction = new TransactionDataSet(
+                    rs.getInt("receipt_id"),
                     currentTimeSql,
                     products,
                     vouchers,

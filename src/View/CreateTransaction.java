@@ -374,7 +374,7 @@ public class CreateTransaction extends javax.swing.JPanel {
 //                Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
 //            }
 //        });
-        awaitPayments.add(transaction);
+        //awaitPayments.add(transaction);
         
         return JSON.StringifyJSON(transaction);
     }
@@ -822,21 +822,21 @@ public class CreateTransaction extends javax.swing.JPanel {
         try {
             // TODO add your handling code here:
             transactDAO.createTransaction(requestRecipt());
-            awaitPayments.get(awaitPayments.size() - 1).reciptId = TransactionDAO.lastRecordGlb;
-            Model_3.setRowCount(0);
-            awaitPayments.forEach(row -> {
-                String products = "";
-                for (int i = 0; i < row.products.size(); i++) {
-                    if (i == row.products.size() - 1) {
-                        products += row.products.get(i).productName;
-                    } else {
-                        products += row.products.get(i).productName + ", ";
-                    }
-
-                }
-
-                Model_3.addRow(new Object[]{row.reciptId, products, row.amount});
-            });
+//            awaitPayments.get(awaitPayments.size() - 1).reciptId = TransactionDAO.lastRecordGlb;
+//            Model_3.setRowCount(0);
+//            awaitPayments.forEach(row -> {
+//                String products = "";
+//                for (int i = 0; i < row.products.size(); i++) {
+//                    if (i == row.products.size() - 1) {
+//                        products += row.products.get(i).productName;
+//                    } else {
+//                        products += row.products.get(i).productName + ", ";
+//                    }
+//
+//                }
+//
+//                Model_3.addRow(new Object[]{row.reciptId, products, row.amount});
+//            });
             ArrayList<ProductDataSet> products = awaitPayments.get(awaitPayments.size() - 1).products;
             products.forEach(product -> {
                 try {
@@ -849,6 +849,7 @@ public class CreateTransaction extends javax.swing.JPanel {
             Table2Rows = new ArrayList();
             loadTable_1();
             loadTable_2(Table2Rows);
+            loadTable_3();
         } catch (JsonProcessingException | SQLException | FileNotFoundException ex) {
             Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
