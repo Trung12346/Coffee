@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JTextFieldDateEditor;
 import java.text.ParseException;
 
 /**
@@ -54,6 +55,9 @@ public class Staff extends javax.swing.JPanel {
         btxoa.setVisible(false);
         btload.setVisible(false);
         passwordfield.setBounds(280, 260, 100, 20);
+        JTextFieldDateEditor editorTuoi = (JTextFieldDateEditor) txttuoi.getDateEditor();
+
+        editorTuoi.setEditable(false);
 
     }
 

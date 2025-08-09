@@ -33,6 +33,28 @@ public class StaffDAO {
             return null;
         }
     }
+    public boolean updateaccount(int id,String password){
+        try {
+            Connection conn = dbConnection.connect();
+            String salt = "";
+            for (int i = 0; i < 32; i++) {
+                int randomindex = new Random().nextInt(characters.length());
+                salt+=characters.charAt(randomindex);
+            }
+            String passwHash = LoginDAO.SHA256(password+salt);
+            Statement stm = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            String query1 = String.format("UPDATE account set hash_token=?,salt =? where staff_id= ? ", passwHash,salt,id);
+            PreparedStatement stmt = conn.prepareStatement(query1);
+            stmt.setString(1, passwHash);
+            stmt.setString(2, salt);
+            stmt.setInt(3, id);
+            int rs = stmt.executeUpdate();
+            return rs>0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public boolean addStaff(String name, long age, String email, String phone, String args, String password, String identitycard, LocalDate ngaysinh) throws NoSuchAlgorithmException {
 //        Connection conn = null;

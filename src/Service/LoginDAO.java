@@ -4,6 +4,7 @@
  */
 package Service;
 
+import Service.dbConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -35,10 +36,23 @@ public class LoginDAO {
         String query = String.format("SELECT username FROM account WHERE username LIKE '%s'", username);
         Statement stm = conn.createStatement();
         ResultSet rs = stm.executeQuery(query);
-        if(rs.next()) {
+        if (rs.next()) {
             return true;
         }
         return false;
+    }
+
+    public static boolean isEmailExist(String email) throws SQLException {
+        Connection conn = dbConnection.connect();
+        String query = String.format("SELECT staff_id FROM staff WHERE email LIKE '%s'", email);
+        Statement stm = conn.createStatement();
+        ResultSet rs = stm.executeQuery(query);
+        if (rs.next()) {
+            GlobalVariables.userId = rs.getInt("staff_id");
+            return true;
+        }
+        return false;
+
     }
 
     public static String checkCredens(String username, String password) throws SQLException, NoSuchAlgorithmException {
@@ -48,11 +62,11 @@ public class LoginDAO {
         ResultSet rs = stm.executeQuery(query);
         rs.next();
         //System.out.println(rs.getString("hash_token"));
-        
+
         String passwordNSalt = password + rs.getString("salt");
         //System.out.println(SHA256(passwordNSalt));
         //System.out.println(rs.getString("hash_token"));
-        if(SHA256(passwordNSalt).equals(rs.getString("hash_token"))) {
+        if (SHA256(passwordNSalt).equals(rs.getString("hash_token"))) {
             return rs.getString("args");
         }
         return null;

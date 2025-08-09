@@ -11,6 +11,7 @@ import Model.TransactionDataSet;
 import Model.VoucherDataSet;
 import Service.ViewTransactionDAO;
 import Service.dbConnection;
+import com.toedter.calendar.JTextFieldDateEditor;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.text.ParseException;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import javax.swing.JTextField;
 
 /**
  *
@@ -40,6 +42,10 @@ public class ViewTransaction extends javax.swing.JPanel {
         initComponents();
         model = (DefaultTableModel) tbldoanhthu.getModel();
         loaddata(vtdao.Loaddata());
+        JTextFieldDateEditor editorStart = (JTextFieldDateEditor) jdtstart.getDateEditor();
+        JTextFieldDateEditor editorEnd = (JTextFieldDateEditor) jdtend.getDateEditor();
+        editorStart.setEditable(false);
+        editorEnd.setEditable(false);
     }
 
  public void loaddata(ResultSet rs) {
@@ -148,13 +154,13 @@ private float getVoucherPrice(int productId, String voucherIds) {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        txtstart = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        txtend = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbldoanhthu = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jdtstart = new com.toedter.calendar.JDateChooser();
+        jdtend = new com.toedter.calendar.JDateChooser();
 
         jLabel1.setText("Ngày bắt đầu:");
 
@@ -195,6 +201,12 @@ private float getVoucherPrice(int productId, String voucherIds) {
             }
         });
 
+        jdtstart.setDateFormatString("yyyy-MM-dd");
+        ((JTextField) jdtstart.getDateEditor().getUiComponent()).setEditable(false);
+
+        jdtend.setDateFormatString("yyyy-MM-dd");
+        ((JTextField) jdtend.getDateEditor().getUiComponent()).setEditable(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -206,11 +218,11 @@ private float getVoucherPrice(int productId, String voucherIds) {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(txtstart))
+                        .addComponent(jdtstart, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtend, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jdtend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(176, 176, 176)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -222,91 +234,77 @@ private float getVoucherPrice(int productId, String voucherIds) {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(37, 37, 37)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(txtstart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(txtend, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(58, 58, 58)
-                        .addComponent(jButton1)))
-                .addGap(18, 18, 18)
-                .addComponent(jButton2)
+                        .addComponent(jButton1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1)
+                            .addComponent(jdtstart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel2))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(28, 28, 28)
+                                .addComponent(jdtend, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(22, 22, 22)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE))
         );
-
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-      model.setRowCount(0);
-    String startdate = txtstart.getText().trim();
-    String enddate = txtend.getText().trim();
+         model.setRowCount(0);
 
-    System.out.println("Debug - Filtering: startdate = [" + startdate + "], enddate = [" + enddate + "]");
+    java.util.Date startdate = jdtstart.getDate();
+    java.util.Date enddate = jdtend.getDate();
+
+    // Validate rỗng
+    if (startdate == null && enddate == null) {
+        JOptionPane.showMessageDialog(this, "Vui lòng chọn ít nhất một ngày để lọc.");
+        return;
+    }
+
+    // Nếu chỉ có 1 ngày thì gán cho ngày còn lại
+    if (startdate == null) startdate = enddate;
+    if (enddate == null) enddate = startdate;
+
+    // Validate ngày kết thúc < ngày bắt đầu
+    if (enddate.before(startdate)) {
+        JOptionPane.showMessageDialog(this, "Ngày kết thúc không được trước ngày bắt đầu.");
+        return;
+    }
+
+    // Format yyyy-MM-dd
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    String startStr = sdf.format(startdate);
+    String endStr = sdf.format(enddate);
 
     try {
-        if (startdate.isEmpty() && enddate.isEmpty()) {
-            System.out.println("Debug - No filter, loading all data");
-            loaddata(vtdao.Loaddata());
-        } else {
-            // Kiểm tra và định dạng ngày
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            sdf.setLenient(false);
+        ResultSet rs = vtdao.fillter(startStr, endStr);
+        if (rs != null) {
+            rs.last();
+            boolean hasData = rs.getRow() > 0;
+            rs.beforeFirst();
 
-            // Parse ngày bắt đầu và ngày kết thúc
-            java.util.Date startDateObj = null;
-            java.util.Date endDateObj = null;
-            if (!startdate.isEmpty()) startDateObj = sdf.parse(startdate);
-            if (!enddate.isEmpty()) endDateObj = sdf.parse(enddate);
-
-            // Validate ngày kết thúc không trước ngày bắt đầu
-            if (startDateObj != null && endDateObj != null && endDateObj.before(startDateObj)) {
-                System.out.println("Debug - Validation error: End date is before start date");
-                JOptionPane.showMessageDialog(this, "Ngày kết thúc không được trước ngày bắt đầu!");
-                return; // Ngăn quá trình lọc tiếp tục
-            }
-
-            // Nếu chỉ có một ngày, đặt ngày còn lại bằng ngày đó
-            if (startDateObj == null && endDateObj != null) startDateObj = endDateObj;
-            if (endDateObj == null && startDateObj != null) endDateObj = startDateObj;
-
-            System.out.println("Debug - Filtering data with range: " + sdf.format(startDateObj) + " to " + sdf.format(endDateObj));
-            ResultSet rs = vtdao.fillter(sdf.format(startDateObj), sdf.format(endDateObj));
-            if (rs != null) {
-                boolean hasData = false;
-                rs.last();
-                hasData = rs.getRow() > 0;
-                rs.beforeFirst();
-                if (hasData) {
-                    loaddata(rs);
-                    System.out.println("Debug - Filter result loaded, row count: " + model.getRowCount());
-                } else {
-                    System.out.println("Debug - No data in result set");
-                    JOptionPane.showMessageDialog(this, "Không có dữ liệu trong khoảng thời gian đã chọn.");
-                }
+            if (hasData) {
+                loaddata(rs);
             } else {
-                System.out.println("Debug - No data returned from filter");
-                JOptionPane.showMessageDialog(this, "Không có dữ liệu từ truy vấn lọc.");
+                JOptionPane.showMessageDialog(this, "Không có dữ liệu trong khoảng thời gian đã chọn.");
             }
-            JOptionPane.showMessageDialog(this, "Lọc thành công");
+        } else {
+            JOptionPane.showMessageDialog(this, "Không có dữ liệu từ truy vấn lọc.");
         }
-    } catch (ParseException ex) {
-        System.out.println("Debug - Date format error: " + ex.getMessage());
-        JOptionPane.showMessageDialog(this, "Định dạng ngày không đúng (yyyy-MM-dd): " + ex.getMessage());
     } catch (Exception ex) {
-        System.out.println("Debug - Filter error: " + ex.getMessage());
         JOptionPane.showMessageDialog(this, "Lọc không thành công: " + ex.getMessage());
     }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        txtend.setText("");
-        txtstart.setText("");
+         jdtstart.setDate(null);
+    jdtend.setDate(null);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
@@ -353,8 +351,8 @@ private float getVoucherPrice(int productId, String voucherIds) {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private com.toedter.calendar.JDateChooser jdtend;
+    private com.toedter.calendar.JDateChooser jdtstart;
     private javax.swing.JTable tbldoanhthu;
-    private javax.swing.JTextField txtend;
-    private javax.swing.JTextField txtstart;
     // End of variables declaration//GEN-END:variables
 }

@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
 import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JTextFieldDateEditor;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,6 +34,10 @@ public class Voucher extends javax.swing.JPanel {
         initComponents();
         Model = (DefaultTableModel) tblvoucher.getModel();
         loaddata();
+        JTextFieldDateEditor editorStart = (JTextFieldDateEditor) txtstartdate.getDateEditor();
+        JTextFieldDateEditor editorEnd = (JTextFieldDateEditor) txtenddate.getDateEditor();
+        editorStart.setEditable(false);
+        editorEnd.setEditable(false);
     }
 
     public void loaddata() {
