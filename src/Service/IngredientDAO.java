@@ -104,7 +104,7 @@ public class IngredientDAO {
         Connection conn = dbConnection.connect();
         Statement stm = conn.createStatement();
 
-        String query = String.format("UPDATE product_ingredients SET quantity = %.2f WHERE product_id = %d AND ingredient_id = %d", quantity, productId, ingredientId);
+        String query = String.format("UPDATE product_ingredients SET quantity = %.3f WHERE product_id = %d AND ingredient_id = %d", quantity, productId, ingredientId);
         System.out.println(query);
         stm.executeUpdate(query);
 

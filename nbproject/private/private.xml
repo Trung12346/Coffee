@@ -7,17 +7,25 @@
             <file>file:/C:/Users/maith/Downloads/Coffee/src/Service/TransactionDAO.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/test/test/ViewTransaction.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/View/Voucher.java</file>
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/View/CreateTransaction_old_1.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/View/Home.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/View/Staff.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/View/RecipeManagement.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/View/ViewTransaction.java</file>
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/Service/dbConnection.java</file>
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/View/Login.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/Service/StaffDAO.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/View/CreateTransaction.java</file>
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/View/forgotpass.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/Service/IngredientDAO.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/View/Warehouse_old.java</file>
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/View/changepassword.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/Service/LoginDAO.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/Model/TransactionDataSet.java</file>
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/Service/CongDAO.java</file>
             <file>file:/C:/Users/maith/Downloads/Coffee/src/View/Storage.java</file>
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/Service/GlobalVariables.java</file>
+            <file>file:/C:/Users/maith/Downloads/Coffee/src/View/ChamCong.java</file>
         </group>
     </open-files>
 </project-private>
