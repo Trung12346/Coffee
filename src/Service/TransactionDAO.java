@@ -122,6 +122,7 @@ public class TransactionDAO {
 
     public String searchMembership(String phone) throws SQLException, JsonProcessingException {
         String query = String.format("SELECT * FROM membership WHERE phone LIKE '%s'", phone);
+        System.out.println("phone: ");
         System.out.println(phone);
         System.out.println("1");
         Statement stm = conn.createStatement();
@@ -138,15 +139,17 @@ public class TransactionDAO {
             query = String.format("SELECT TOP 1 expiration_date FROM point_history WHERE change_type = -1 AND membership_id = '%s' ORDER BY point_change_id DESC", membershipId);
             stm = conn.createStatement();
             ResultSet timeRs = stm.executeQuery(query);
+            System.out.println("7");
             timeRs.next();
             java.sql.Timestamp lastestSpendSql = timeRs.getTimestamp("expiration_date");
             java.util.Date lastestSpendUtil = new Date(lastestSpendSql.getTime());
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-            query = String.format("SELECT SUM(point_change) AS point FROM point_history WHERE change_type = 1 AND membership_id = 1 AND expiration_date > CURRENT_TIMESTAMP AND expiration_date > '%s'", sdf.format(lastestSpendUtil));
+            query = String.format("SELECT SUM(point_change) AS point FROM point_history WHERE change_type = 1 AND membership_id = %d AND expiration_date > CURRENT_TIMESTAMP AND expiration_date > '%s'", membershipId, sdf.format(lastestSpendUtil));
             stm = conn.createStatement();
             ResultSet pointRs = stm.executeQuery(query);
+            System.out.println("8");
             pointRs.next();
             int point = pointRs.getInt("point");
             MembershipDataSet mds = new MembershipDataSet(membershipId,

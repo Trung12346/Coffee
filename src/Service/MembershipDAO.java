@@ -26,6 +26,7 @@ public class MembershipDAO {
     public boolean add(String membership_name, String phone, String security_code) {
         try {
             Connection conn = dbConnection.connect();
+            Statement stm = conn.createStatement();
             //String query = "INSERT INTO membership (membership_name, phone, sercurity_code, rank_name, expiration_date) VALUES (?, ?, ?, ?, ?)";
             String query = "INSERT INTO membership (membership_name, phone, sercurity_code, staff_id) VALUES (?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(query);
@@ -35,6 +36,13 @@ public class MembershipDAO {
             ps.setString(3, security_code);
             ps.setInt(4, GlobalVariables.userId);
             int rows = ps.executeUpdate();
+            query = "SELECT @@identity AS last_membership";
+            ResultSet rs = stm.executeQuery(query);
+            rs.next();
+            int lastestMembershipId = rs.getInt("last_membership");
+            query = String.format("INSERT INTO point_history VALUES (%d, -1, null, CURRENT_TIMESTAMP)", lastestMembershipId);
+            stm = conn.createStatement();
+            stm.executeUpdate(query);
             return rows > 0;
         } catch (SQLException e) {
             System.out.println(e);
