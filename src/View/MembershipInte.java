@@ -98,7 +98,7 @@ public class MembershipInte extends javax.swing.JPanel {
             return;
         }
         if (sdt.matches(regexphone)) {
-            JOptionPane.showMessageDialog(this, "sdt khong hop le");
+            JOptionPane.showMessageDialog(this, "Số điện thoại không hợp lệ");
             return;
         }
 //    String thoiHanSelected = (String) cbboxexpirday.getSelectedItem();
@@ -113,13 +113,18 @@ public class MembershipInte extends javax.swing.JPanel {
 //    String rankName = (String) jComboBox1.getSelectedItem();
         MembershipDAO mmbs = new MembershipDAO();
         //boolean isAdded = mmbs.add(ten, sdt, securityCode, rankName, expirationDate);
+        if(mmbs.isExist(sdt)) {
+            JOptionPane.showMessageDialog(this, "Hội viên đã tồn tại");
+            return;
+        }
+        
         boolean isAdded = mmbs.add(ten, sdt, securityCode);
         if (isAdded) {
-            JOptionPane.showMessageDialog(this, "Dang ky thanh cong");
+            JOptionPane.showMessageDialog(this, "Đăng ký thành công");
+            loaddata();
         } else {
-            JOptionPane.showMessageDialog(this, "Dang ky that bai");
+            JOptionPane.showMessageDialog(this, "Đăng ký thất bại");
         }
-
     }//GEN-LAST:event_btnnsigninActionPerformed
 
 
