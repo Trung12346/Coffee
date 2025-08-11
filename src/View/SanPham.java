@@ -230,8 +230,9 @@ public class SanPham extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnnaddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnnaddActionPerformed
-       if (txtten.getText().trim().isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng nhập tên sản phẩm");
+       String regrex="^[a-zA-Z\\s]+$";
+        if (txtten.getText().trim().isEmpty()||!txtten.getText().toString().matches(regrex)) {
+        JOptionPane.showMessageDialog(this, "Vui lòng nhập lại tên sản phẩm");
         return;
     } else if (txtgia.getText().trim().isEmpty()) {
         JOptionPane.showMessageDialog(this, "Vui lòng nhập giá sản phẩm");

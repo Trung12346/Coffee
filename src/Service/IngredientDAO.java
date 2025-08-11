@@ -76,12 +76,12 @@ public class IngredientDAO {
                 stm_1 = conn.createStatement();
                 ResultSet rs_1 = stm_1.executeQuery(query_1);
 
-                int smallestAcquirable = -1;
+                int smallestAcquirable = 0;
                 while (rs_1.next()) {
                     float availableQuantity = rs_1.getFloat("ready_quantity");
                     float neededQuantity = rs_1.getFloat("quantity");
                     int doable = (int) Math.floor(availableQuantity / neededQuantity);
-                    if (smallestAcquirable < 0) {
+                    if (smallestAcquirable <= 0) {
                         smallestAcquirable = doable;
                     }
                     if (smallestAcquirable > doable) {

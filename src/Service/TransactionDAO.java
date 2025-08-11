@@ -341,7 +341,7 @@ public class TransactionDAO {
         String query_1 = String.format("SELECT product_id, ingredient_id, quantity, ready_quantity  FROM (SELECT * FROM product_ingredients WHERE product_id = %d) p INNER JOIN (SELECT item, SUM(quantity) AS ready_quantity FROM storage GROUP BY item) s ON p.ingredient_id = s.item ", productId);
         System.out.println(query_1);
         Statement stm_1;
-        int smallestAcquirable = -1;
+        int smallestAcquirable = 0;
         try {
             stm_1 = conn.createStatement();
             ResultSet rs_1 = stm_1.executeQuery(query_1);
@@ -350,7 +350,7 @@ public class TransactionDAO {
                 float availableQuantity = rs_1.getFloat("ready_quantity");
                 float neededQuantity = rs_1.getFloat("quantity");
                 int doable = (int) Math.floor(availableQuantity / neededQuantity);
-                if (smallestAcquirable < 0) {
+                if (smallestAcquirable <= 0) {
                     smallestAcquirable = doable;
                 }
                 if (smallestAcquirable > doable) {

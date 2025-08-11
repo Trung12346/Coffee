@@ -801,8 +801,8 @@ public class CreateTransaction extends javax.swing.JPanel {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         int selectedRow = jTable2.getSelectedRow();
-        if (selectedRow >= 1) {
-            Table2Rows.remove(selectedRow - 1);
+        if (selectedRow > -1) {
+            Table2Rows.remove(selectedRow);
             loadTable_2(Table2Rows);
         }
     }//GEN-LAST:event_jButton3ActionPerformed

@@ -436,7 +436,7 @@ public class Staff extends javax.swing.JPanel {
             String emailRegex = "^[\\w.-]+@[\\w.-]+\\.[A-Za-z]{2,6}$";
             String identitycard = txtcccd.getText().trim();
             String regex = "^[0-9]{12}$";
-            String regexphone = "^[0-9]{9,10}$";
+            String regexphone = "^(?:\\+84|0)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])\\d{7}$";
             String email = txtemail.getText().trim();
             String phone = txtphone.getText().trim();
             String name = txtten.getText().trim();
@@ -492,7 +492,7 @@ public class Staff extends javax.swing.JPanel {
     private void btsuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btsuaActionPerformed
        try {
            String regex = "^[0-9]{12}$";
-           String regexphone = "^[0-9]{9,10}$";
+           String regexphone = "^(?:\\+84|0)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])\\d{7}$";
 //            if(txtmanhanvien.getText().toString().trim().length()==0){
 //                JOptionPane.showMessageDialog(this, "khong duoc de trong ma nhan vien");
 //            return;

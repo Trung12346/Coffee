@@ -57,41 +57,48 @@ public class ChamCongFixed extends javax.swing.JPanel {
     }
 
     private void displayData() throws SQLException {
-        model.setRowCount(0);
-        ResultSet rs = cdao.getTodayCong();
-        try {
-            while (rs.next()) {
-                int showsUp = rs.getInt("shows_up");
-                String trangThai;
-                switch (showsUp) {
-                    case 0 ->
-                        trangThai = "Vắng";
-                    case 1 ->
-                        trangThai = "Đi muộn";
-                    case 2 ->
-                        trangThai = "Có mặt";
-                    default ->
-                        trangThai = "Không xác định";
-                }
-
-                Time showUpTime = rs.getTime("show_up_time");
-                boolean checked = (showUpTime != null);
-
-                model.addRow(new Object[]{
-                    rs.getInt("cong_id"),
-                    rs.getInt("staff_id"),
-                    rs.getString("staff_name"),
-                    rs.getDate("date"),
-                    showUpTime,
-                    rs.getTime("shift_start") + "-" + rs.getTime("shift_end"),
-                    trangThai,
-                    checked
-                });
+     model.setRowCount(0);
+    ResultSet rs = cdao.getTodayCong();
+    try {
+        while (rs.next()) {
+            int showsUp = rs.getInt("shows_up");
+            String trangThai;
+            switch (showsUp) {
+                case 0 -> trangThai = "Vắng";
+                case 1 -> trangThai = "Đi muộn";
+                case 2 -> trangThai = "Có mặt";
+                default -> trangThai = "Không xác định";
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi hiển thị dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+
+            Time showUpTime = rs.getTime("show_up_time");
+            boolean checked = (showUpTime != null);
+
+            Time start = rs.getTime("shift_start");
+            Time end = rs.getTime("shift_end");
+
+            String calam;
+            if (start == null || end == null) {
+                calam = "Chưa có"; 
+            } else {
+                calam = start.toString() + "-" + end.toString();
+            }
+
+            model.addRow(new Object[]{
+                rs.getInt("cong_id"),
+                rs.getInt("staff_id"),
+                rs.getString("staff_name"),
+                rs.getDate("date"),
+                showUpTime,
+                calam,
+                trangThai,
+                checked
+            });
         }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Lỗi khi hiển thị dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
+
     }
 
     public void loadTable_2() throws SQLException {
