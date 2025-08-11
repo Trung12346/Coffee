@@ -96,10 +96,21 @@ public class ChamCongFixed extends javax.swing.JPanel {
 
     public void loadTable_2() throws SQLException {
         System.out.println("loading 2");
-        ArrayList<String[]> cong = cdao.getAllCong();
-        Object[] headers = cdao.getUsernames();
-        DefaultTableModel model_2 = new DefaultTableModel(headers, 2);
+        ArrayList<Object[]> cong = cdao.getAllCong();
+        String[] headers = cdao.getUsernames();
+        DefaultTableModel model_2 = new DefaultTableModel(new Object[][]{}, headers);
         jTable1 = new JTable(model_2);
+        
+        model_2 = (DefaultTableModel) jTable1.getModel();
+        jScrollPane4.setViewportView(jTable1);
+        jScrollPane3.setViewportView(jScrollPane4);
+        
+        
+        model_2.setRowCount(0);
+        for(int i = cong.size() - 1; i >= 0; i--) {
+            model_2.addRow(cong.get(i));
+        }
+        
     }
 
     private void handleAssignShift(int ca) {
@@ -220,6 +231,8 @@ public class ChamCongFixed extends javax.swing.JPanel {
         jScrollPane3 = new javax.swing.JScrollPane();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 225));
 
@@ -284,6 +297,12 @@ public class ChamCongFixed extends javax.swing.JPanel {
 
         jScrollPane3.setViewportView(jScrollPane4);
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setText("Xếp ca");
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel2.setText("Lịch sử đi làm");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -292,12 +311,16 @@ public class ChamCongFixed extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 669, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                            .addGap(82, 82, 82)
+                            .addGap(93, 93, 93)
+                            .addComponent(jLabel1)
+                            .addGap(18, 18, 18)
                             .addComponent(btnCa1)
-                            .addGap(28, 28, 28)
+                            .addGap(18, 18, 18)
                             .addComponent(btnCa2))
                         .addGroup(layout.createSequentialGroup()
                             .addGap(68, 68, 68)
@@ -307,14 +330,17 @@ public class ChamCongFixed extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(195, 195, 195)
+                .addGap(185, 185, 185)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
                     .addComponent(btnCa1)
                     .addComponent(btnCa2))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addContainerGap(32, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -423,6 +449,8 @@ public class ChamCongFixed extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCa1;
     private javax.swing.JButton btnCa2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;

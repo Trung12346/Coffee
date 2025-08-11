@@ -8,6 +8,7 @@ import Model.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.sql.*;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -118,11 +119,11 @@ public class CongDAO {
             e.printStackTrace();
         }
     }
-    public ArrayList<String[]> getAllCong() throws SQLException {
+    public ArrayList<Object[]> getAllCong() throws SQLException {
         ArrayList ids = new ArrayList();
         java.time.LocalDate minDate = null;
         java.time.LocalDate maxDate = null;
-        ArrayList<String[]> cong = new ArrayList();
+        ArrayList<Object[]> cong = new ArrayList();
         
         
         String query = "SELECT staff_id FROM cong GROUP BY staff_id";
@@ -149,10 +150,28 @@ public class CongDAO {
             query = String.format("SELECT shows_up FROM cong WHERE date LIKE '%s'", minDate.plusDays(i));
             stm = conn.createStatement();
             rs = stm.executeQuery(query);
-            String[] congOfDay = new String[ids.size()];
-            int x = 0;
+            Object[] congOfDay = new Object[ids.size() + 1];
+            
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            congOfDay[0] = minDate.plusDays(i).format(dtf);
+            
+            int x = 1;
             while(rs.next()) {
-                congOfDay[x++] = rs.getString("shows_up");
+                String trangThai;
+                switch(rs.getInt("shows_up")) {
+                    case 0:
+                        trangThai = "Vắng";
+                        break;
+                    case 1:
+                        trangThai = "Có mặt";
+                        break;
+                    case 2:
+                        trangThai = "Muộn";
+                        break;
+                    default:
+                        trangThai = "";
+                }
+                congOfDay[x++] = trangThai;
             }
             cong.add(congOfDay);
         }
@@ -166,13 +185,13 @@ public class CongDAO {
         rs.next();
         int size = rs.getInt("coun");
         
-        String[] headers = new String[size];
-        
+        String[] headers = new String[size + 1];
+        headers[0] = "Ngày";
         query = "SELECT username FROM account ORDER BY staff_id ASC";
         stm = conn.createStatement();
         rs = stm.executeQuery(query);
         
-        int i = 0;
+        int i = 1;
         while(rs.next()) {
             headers[i++] = rs.getString("username");
         }
