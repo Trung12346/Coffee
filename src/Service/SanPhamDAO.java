@@ -5,6 +5,9 @@
 package Service;
 import Service.dbConnection;
 import java.sql.*;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author ADMIN
@@ -34,5 +37,27 @@ public class SanPhamDAO {
             return false;
         }
     }
-    
+    public void update(int id, String name, float price) throws SQLException {
+        Locale.setDefault(Locale.US);
+        Connection conn=dbConnection.connect();
+        
+        String query = String.format("UPDATE product SET product_price = %f, product_name = '%s' WHERE product_id = %d", price, name, id);
+        Statement stm = conn.createStatement();
+        stm.executeUpdate(query);
+    }
+    public boolean isExist(String name) {
+        try {
+            Connection conn = dbConnection.connect();
+            
+            String query = String.format("SELECT * FROM product WHERE product_name LIKE N'%s'", name);
+            Statement stm = conn.createStatement();
+            ResultSet rs = stm.executeQuery(query);
+            return true;
+            
+        } catch (SQLException ex) {
+            
+            Logger.getLogger(SanPhamDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
 }

@@ -20,7 +20,8 @@ import javax.swing.*;
  * @author ADMIN
  */
 public class Membership extends JPanel {
-    MembershipDAO mmbs= new MembershipDAO();
+
+    MembershipDAO mmbs = new MembershipDAO();
     private LocalDate ngayhethan;
     private LocalDate ngayhientai;
 
@@ -28,6 +29,7 @@ public class Membership extends JPanel {
      * Creates new form membership
      */
     DefaultTableModel model;
+
     public Membership() {
         initComponents();
         model = (DefaultTableModel) tblmembership.getModel();
@@ -37,18 +39,18 @@ public class Membership extends JPanel {
 //        rank.setVisible(false);
 //        jLabel2.setVisible(false);
     }
-    public void loaddata(){
+
+    public void loaddata() {
         model.setRowCount(0);
         ResultSet rs = mmbs.hienthi();
         try {
-            while(rs.next()){
-            model.addRow(new Object[]{
-            rs.getInt("membership_id"),
-                rs.getString("membership_name"),
-                rs.getString("phone"),
-//                rs.getTimestamp("expiration_date").toString(),
-//                rs.getString("rank_name")
-            });
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    rs.getInt("membership_id"),
+                    rs.getString("membership_name"),
+                    rs.getString("phone"), //                rs.getTimestamp("expiration_date").toString(),
+                //                rs.getString("rank_name")
+                });
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,22 +84,22 @@ public class Membership extends JPanel {
         });
 
         tblmembership.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
-            },
-            new String [] {
-                "Hội Viên Mã", "Tên Hội viên", "Số Điện Thoại Hội Viên"
-            }
+                new Object[][]{
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null}
+                },
+                new String[]{
+                    "Hội Viên Mã", "Tên Hội viên", "Số Điện Thoại Hội Viên"
+                }
         ) {
-            Class[] types = new Class [] {
+            Class[] types = new Class[]{
                 java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
         });
         jScrollPane1.setViewportView(tblmembership);
@@ -105,38 +107,38 @@ public class Membership extends JPanel {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1)
-                    .addComponent(label))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(218, 218, 218)
-                        .addComponent(btnnsignin))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(txtsdt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
-                        .addComponent(txtten, javax.swing.GroupLayout.Alignment.LEADING)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(16, 16, 16)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabel1)
+                                        .addComponent(label))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(218, 218, 218)
+                                                .addComponent(btnnsignin))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addComponent(txtsdt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                                                .addComponent(txtten, javax.swing.GroupLayout.Alignment.LEADING)))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(46, 46, 46)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(label)
-                    .addComponent(txtten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtsdt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(btnnsignin)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 123, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(46, 46, 46)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(label)
+                                        .addComponent(txtten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel1)
+                                        .addComponent(txtsdt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addComponent(btnnsignin)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 123, Short.MAX_VALUE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -235,39 +237,43 @@ public class Membership extends JPanel {
 
     private void btnnsigninActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnnsigninActionPerformed
         // TODO add your handling code here:
-       String ten = txtten.getText();
+        String ten = txtten.getText();
         String sdt = txtsdt.getText();
         ngayhientai = LocalDate.now();
         String regexphone = "^[0-9]${9}";
 
-if (ten.isEmpty() || sdt.isEmpty()) {
-    JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
-    return;
-    }if(sdt.matches(regexphone)){
-        JOptionPane.showMessageDialog(this, "sdt khong hop le");
-        return;
-    }
+        if (ten.isEmpty() || sdt.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
+            return;
+        }
+        if (sdt.matches(regexphone)) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại không hợp lệ");
+            return;
+        }
 //    String thoiHanSelected = (String) cbboxexpirday.getSelectedItem();
 //    int monthsToAdd = Integer.parseInt(thoiHanSelected.split(" ")[0]);
 
 //    ngayhethan = ngayhientai.plusMonths(monthsToAdd);
-
-    String securityCode = "MB" + String.format("%02d", (int)(Math.random() * 100));
+        String securityCode = "MB" + String.format("%02d", (int) (Math.random() * 100));
 
 //    LocalDateTime localDateTime = ngayhethan.atStartOfDay();
 //    Timestamp expirationDate = Timestamp.valueOf(localDateTime.atZone(ZoneId.systemDefault()).toLocalDateTime());
 //
 //    String rankName = (String) jComboBox1.getSelectedItem();
-
-    MembershipDAO mmbs = new MembershipDAO();
-    //boolean isAdded = mmbs.add(ten, sdt, securityCode, rankName, expirationDate);
-    boolean isAdded = mmbs.add(ten, sdt, securityCode);
-    if (isAdded) {
-    JOptionPane.showMessageDialog(this, "Dang ky thanh cong");
-    loaddata();
-    } else {
-    JOptionPane.showMessageDialog(this, "Dang ky that bai");
-    }
+        MembershipDAO mmbs = new MembershipDAO();
+        //boolean isAdded = mmbs.add(ten, sdt, securityCode, rankName, expirationDate);
+        if(mmbs.isExist(sdt)) {
+            JOptionPane.showMessageDialog(this, "Hội viên đã tồn tại");
+            return;
+        }
+        
+        boolean isAdded = mmbs.add(ten, sdt, securityCode);
+        if (isAdded) {
+            JOptionPane.showMessageDialog(this, "Đăng ký thành công");
+            loaddata();
+        } else {
+            JOptionPane.showMessageDialog(this, "Đăng ký thất bại");
+        }
 
 
     }//GEN-LAST:event_btnnsigninActionPerformed

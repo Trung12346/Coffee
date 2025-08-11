@@ -73,7 +73,7 @@
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace pref="25" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                   <Component id="panel" max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -374,7 +374,7 @@
         <Container class="javax.swing.JPanel" name="panel">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="99" green="99" red="ff" type="rgb"/>
+              <Color blue="e1" green="ff" red="ff" type="rgb"/>
             </Property>
           </Properties>
 

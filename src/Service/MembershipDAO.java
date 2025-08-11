@@ -5,6 +5,8 @@
 package Service;
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -49,5 +51,19 @@ public class MembershipDAO {
             return false;
         }
     }
-
+    public boolean isExist(String phone) {
+        try {
+            Connection conn = dbConnection.connect();
+            
+            String query = String.format("SELECT * FROM membership WHERE phone LIKE '%s'", phone);
+            Statement stm = conn.createStatement();
+            ResultSet rs = stm.executeQuery(query);
+            return true;
+            
+        } catch (SQLException ex) {
+            
+            Logger.getLogger(MembershipDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
 }

@@ -198,7 +198,7 @@ public class Voucher extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        try {
+try {
             java.util.Date startStr = txtstartdate.getDate();
             java.util.Date endStr = txtenddate.getDate();
             String regrexprice = "^[0-9]+(\\.[0-9]+)?$";
@@ -234,24 +234,14 @@ public class Voucher extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "ngay khong hop le");
                 return;
             }
-            for(int i = 0; i < validation.size(); i++) {
-                if(productId == validation.get(i).productId) {
-                    if(start_date.before(validation.get(i).endDate)) {
-                        JOptionPane.showMessageDialog(this, "voucher cho san pham nay chua het han");
-                        return;
-                    }
-                }
-            }
-            
-            boolean success = voucherdao.add(start_date, end_date, productId, newPrice);
-            if (success) {
-                JOptionPane.showMessageDialog(this, "Thêm voucher thành công!");
-                loaddata();
-            } else {
-                JOptionPane.showMessageDialog(this, "Thêm voucher thất bại!");
+            boolean updatesucces = voucherdao.update(start_date, end_date, productId, newPrice);
+            if(updatesucces){
+            JOptionPane.showMessageDialog(this, "Sua voucher thanh cong");
+            loaddata();
+            }else{
+            JOptionPane.showMessageDialog(this, "Sua voucher that bai");
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi nhập liệu! Hãy nhập đúng định dạng: dd/MM/yyyy và kiểm tra số liệu khác.");
             e.printStackTrace();
         }
 

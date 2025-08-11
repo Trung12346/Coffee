@@ -7,6 +7,8 @@ package View;
 import Service.SanPhamDAO;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -20,12 +22,12 @@ public class SanPham extends javax.swing.JPanel {
      * Creates new form SanPham
      */
     DefaultTableModel Model;
-    private JLabel jLabel3;
 
     public SanPham() {
         initComponents();
         Model = (DefaultTableModel) tblsp.getModel();
         hienthi();
+        id.setVisible(false);
     }
     SanPhamDAO spdao = new SanPhamDAO();
 
@@ -33,12 +35,12 @@ public class SanPham extends javax.swing.JPanel {
         Model.setRowCount(0);
         ResultSet rs = spdao.hienthi();
         try {
-            while(rs.next()){
-            Model.addRow(new Object[]{
-            rs.getInt("product_id"),
-                rs.getString("product_name"),
-                rs.getFloat("product_price")
-            });
+            while (rs.next()) {
+                Model.addRow(new Object[]{
+                    rs.getInt("product_id"),
+                    rs.getString("product_name"),
+                    rs.getFloat("product_price")
+                });
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,22 +74,22 @@ public class SanPham extends javax.swing.JPanel {
         });
 
         tblsp.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Mã Sản Phẩm", "Tên Sản Phẩm", "Giá Sản Phẩm", "Title 4"
-            }
+                new Object[][]{
+                    {null, null, null, null},
+                    {null, null, null, null},
+                    {null, null, null, null},
+                    {null, null, null, null}
+                },
+                new String[]{
+                    "Mã Sản Phẩm", "Tên Sản Phẩm", "Giá Sản Phẩm", "Title 4"
+                }
         ) {
-            Class[] types = new Class [] {
+            Class[] types = new Class[]{
                 java.lang.Integer.class, java.lang.String.class, java.lang.Float.class, java.lang.Object.class
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
         });
         jScrollPane1.setViewportView(tblsp);
@@ -95,37 +97,38 @@ public class SanPham extends javax.swing.JPanel {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(70, 70, 70)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtten)
-                    .addComponent(txtgia, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))
-                .addGap(61, 61, 61)
-                .addComponent(btnnadd)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 715, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(70, 70, 70)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabel2)
+                                        .addComponent(jLabel1))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(txtten)
+                                        .addComponent(txtgia, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))
+                                .addGap(61, 61, 61)
+                                .addComponent(btnnadd)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 715, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(42, 42, 42)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(txtgia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnnadd))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 180, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(42, 42, 42)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel1)
+                                        .addComponent(txtten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel2)
+                                        .addComponent(txtgia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnnadd))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 180, Short.MAX_VALUE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>     
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -138,6 +141,8 @@ public class SanPham extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblsp = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
+        btnnadd1 = new javax.swing.JButton();
+        id = new javax.swing.JTextField();
 
         setBackground(java.awt.SystemColor.info);
 
@@ -173,9 +178,21 @@ public class SanPham extends javax.swing.JPanel {
             Class[] types = new Class [] {
                 java.lang.Integer.class, java.lang.String.class, java.lang.Float.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblsp.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblspMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tblsp);
@@ -183,6 +200,16 @@ public class SanPham extends javax.swing.JPanel {
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(153, 102, 0));
         jLabel3.setText("SẢN PHẨM");
+
+        btnnadd1.setBackground(new java.awt.Color(102, 51, 0));
+        btnnadd1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnnadd1.setForeground(java.awt.SystemColor.info);
+        btnnadd1.setText("Lưu");
+        btnnadd1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnnadd1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -197,7 +224,10 @@ public class SanPham extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(70, 70, 70)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnnadd, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnnadd1, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnnadd, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel2)
@@ -205,8 +235,10 @@ public class SanPham extends javax.swing.JPanel {
                                 .addGap(55, 55, 55)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(txtgia, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
-                                    .addComponent(txtten))))))
-                .addContainerGap(845, Short.MAX_VALUE))
+                                    .addComponent(txtten))))
+                        .addGap(139, 139, 139)
+                        .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(642, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -216,13 +248,16 @@ public class SanPham extends javax.swing.JPanel {
                 .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtten, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(jLabel1)
+                    .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtgia, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
-                .addComponent(btnnadd, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnnadd, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnnadd1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 562, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -230,44 +265,103 @@ public class SanPham extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnnaddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnnaddActionPerformed
-       String regrex="^[a-zA-Z\\s]+$";
-        if (txtten.getText().trim().isEmpty()||!txtten.getText().toString().matches(regrex)) {
-        JOptionPane.showMessageDialog(this, "Vui lòng nhập lại tên sản phẩm");
-        return;
-    } else if (txtgia.getText().trim().isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng nhập giá sản phẩm");
-        return;
-    } else {
-        String giaInput = txtgia.getText().trim();
-        // Check if the input contains only digits, optional decimal point, and optional negative sign
-        if (!giaInput.matches("^-?\\d*\\.?\\d+$")) {
-            JOptionPane.showMessageDialog(this, "giá không hợp lệ ,phải là số nguyên");
+        String regrex = "^[^\\d]+$"; //^[a-zA-Z\\s]+$
+        if (txtten.getText().trim().isEmpty() || !txtten.getText().toString().matches(regrex)) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập lại tên sản phẩm");
             return;
-        }
-        try {
-            Float gia = Float.parseFloat(giaInput);
-            if (gia <= 0) {
-                JOptionPane.showMessageDialog(this, "Giá không hợp lệ, phải lớn hơn 0");
+        } else if (txtgia.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập giá sản phẩm");
+            return;
+        } else {
+            String giaInput = txtgia.getText().trim();
+            // Check if the input contains only digits, optional decimal point, and optional negative sign
+            if (!giaInput.matches("^-?\\d*\\.?\\d+$")) {
+                JOptionPane.showMessageDialog(this, "giá không hợp lệ ,phải là số nguyên");
                 return;
             }
-            String ten = txtten.getText().trim();
-            boolean rs = spdao.add(ten, gia);
-            if (rs) {
-                JOptionPane.showMessageDialog(this, "Thêm thành công");
-            } else {
-                JOptionPane.showMessageDialog(this, "Thêm thất bại");
+            try {
+                Float gia = Float.parseFloat(giaInput);
+                if (gia <= 0) {
+                    JOptionPane.showMessageDialog(this, "Giá không hợp lệ, phải lớn hơn 0");
+                    return;
+                }
+                String ten = txtten.getText().trim();
+                
+                if(spdao.isExist(ten)) {
+                    JOptionPane.showMessageDialog(this, "Sản phẩm đã tồn tại");
+                    return;
+                }
+                
+                boolean rs = spdao.add(ten, gia);
+                if (rs) {
+                    JOptionPane.showMessageDialog(this, "Thêm thành công");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Thêm thất bại");
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Giá sản phẩm không hợp lệ");
+                return;
             }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Giá sản phẩm không hợp lệ");
-            return;
+            hienthi();
         }
-        hienthi();
-    }
     }//GEN-LAST:event_btnnaddActionPerformed
 
     private void txtgiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtgiaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtgiaActionPerformed
+
+    private void btnnadd1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnnadd1ActionPerformed
+        // TODO add your handling code here:
+        String regrex = "^[^\\d]+$";
+        if (txtten.getText().trim().isEmpty() || !txtten.getText().toString().matches(regrex)) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập lại tên sản phẩm");
+            return;
+        } else if (txtgia.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập giá sản phẩm");
+            return;
+        } else {
+            String giaInput = txtgia.getText().trim();
+            // Check if the input contains only digits, optional decimal point, and optional negative sign
+            if (!giaInput.matches("^-?\\d*\\.?\\d+$")) {
+                JOptionPane.showMessageDialog(this, "giá không hợp lệ ,phải là số nguyên");
+                return;
+            }
+            try {
+                Float gia = Float.parseFloat(giaInput);
+                if (gia <= 0) {
+                    JOptionPane.showMessageDialog(this, "Giá không hợp lệ, phải lớn hơn 0");
+                    return;
+                }
+                String ten = txtten.getText().trim();
+                
+                if(spdao.isExist(ten)) {
+                    JOptionPane.showMessageDialog(this, "Tên đã được sử dụng");
+                    return;
+                }
+                
+                spdao.update(Integer.parseInt(id.getText()), ten, gia);
+                JOptionPane.showMessageDialog(this, "Lưu thành công");
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Giá sản phẩm không hợp lệ");
+                return;
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Sửa thất bại");
+                Logger.getLogger(SanPham.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            hienthi();
+        }
+
+    }//GEN-LAST:event_btnnadd1ActionPerformed
+
+    private void tblspMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblspMouseClicked
+        // TODO add your handling code here:
+        int selectedRow = tblsp.getSelectedRow();
+
+        id.setText(tblsp.getValueAt(selectedRow, 0).toString());
+        txtten.setText(tblsp.getValueAt(selectedRow, 1).toString());
+        txtgia.setText(tblsp.getValueAt(selectedRow, 2).toString());
+    }//GEN-LAST:event_tblspMouseClicked
 
     /**
      * @param args the command line arguments
@@ -306,8 +400,11 @@ public class SanPham extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnnadd;
+    private javax.swing.JButton btnnadd1;
+    private javax.swing.JTextField id;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblsp;
     private javax.swing.JTextField txtgia;
