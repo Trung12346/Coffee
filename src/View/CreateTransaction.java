@@ -828,6 +828,7 @@ public class CreateTransaction extends javax.swing.JPanel {
 //
 //                Model_3.addRow(new Object[]{row.reciptId, products, row.amount});
 //            });
+            awaitPayments = transactDAO.getUncompletedReceipt();
             ArrayList<ProductDataSet> products = awaitPayments.get(awaitPayments.size() - 1).products;
             products.forEach(product -> {
                 try {
@@ -836,7 +837,7 @@ public class CreateTransaction extends javax.swing.JPanel {
                     Logger.getLogger(CreateTransaction.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-            awaitPayments = transactDAO.getUncompletedReceipt();
+            
             Table2Rows = new ArrayList();
             loadTable_1();
             loadTable_2(Table2Rows);

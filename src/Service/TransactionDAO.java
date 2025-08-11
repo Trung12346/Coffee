@@ -617,6 +617,7 @@ public class TransactionDAO {
             System.out.println(JSON.StringifyJSON(transaction));
             transactions.add(transaction);
         }
+        System.out.println("GOTTEN UNCOMPLETED RECEIPTS");
         return transactions;
     }
 }
