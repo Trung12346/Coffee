@@ -121,7 +121,6 @@ public class MembershipInte extends javax.swing.JPanel {
         boolean isAdded = mmbs.add(ten, sdt, securityCode);
         if (isAdded) {
             JOptionPane.showMessageDialog(this, "Đăng ký thành công");
-            loaddata();
         } else {
             JOptionPane.showMessageDialog(this, "Đăng ký thất bại");
         }
