@@ -91,7 +91,7 @@ public class StaffDAO {
             ResultSet rs = stm.executeQuery(query_3);
             rs.next();
             int id = rs.getInt("staff_id");
-            String query_4 = String.format("INSERT INTO account VALUES ('%s', %d, '%s', '%s', '%s')", name, id, passwordHash, salt, args);
+            String query_4 = String.format("INSERT INTO account VALUES ('%s', %d, '%s', '%s', '%s')", generateUniqueUsername(name), id, passwordHash, salt, args);
 
             stm.executeUpdate(query_4);
             conn.commit();
@@ -140,34 +140,134 @@ public class StaffDAO {
 //        }
 //    }
                                     
-    public boolean updateStaff(int staffId, int age, String email, String phone) {
-        Connection conn = null;
-        try {
-            conn = dbConnection.connect();
-            if (conn == null) {
-                throw new SQLException("Không thể kết nối đến database");
+   public boolean updateStaff(
+    String name,
+    long age,
+    String email,
+    String phone,
+    String password,       
+    String identitycard,
+    LocalDate ngaysinh,
+    int staffid) {
+    
+    String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    Connection conn = null;
+    PreparedStatement stmtStaff = null;
+    PreparedStatement stmtAccount = null;
+    
+    try {
+        conn = dbConnection.connect();
+        conn.setAutoCommit(false);
+
+       
+        String updateStaffSQL = "UPDATE staff SET staff_name=?, age=?, email=?, phone=?, identitycard=?, ngaysinh=? WHERE staff_id=?";
+        stmtStaff = conn.prepareStatement(updateStaffSQL);
+        stmtStaff.setString(1, name);
+        stmtStaff.setLong(2, age);
+        stmtStaff.setString(3, email);
+        stmtStaff.setString(4, phone);
+        stmtStaff.setString(5, identitycard);
+        stmtStaff.setDate(6, java.sql.Date.valueOf(ngaysinh));
+        stmtStaff.setInt(7, staffid);
+        int affectedRows = stmtStaff.executeUpdate();
+
+        if (affectedRows == 0) {
+            throw new SQLException("Cập nhật nhân viên thất bại, không có dòng nào bị ảnh hưởng.");
+        }
+
+        if (password != null && !password.trim().isEmpty()) {
+           
+            StringBuilder saltBuilder = new StringBuilder();
+            Random random = new Random();
+            for (int i = 0; i < 32; i++) {
+                int randomIndex = random.nextInt(characters.length());
+                saltBuilder.append(characters.charAt(randomIndex));
             }
-            String query = "UPDATE staff SET age = ?, email = ?, phone = ?,identitycard = ? WHERE staff_id = ?";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setInt(1, age);
-            stmt.setString(2, email);
-            stmt.setString(3, phone);
-            stmt.setInt(4, staffId);
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+            String salt = saltBuilder.toString();
+            String passwordHash = LoginDAO.SHA256(password + salt);
+
+            String updateAccountSQL = "UPDATE account SET hash_token=?, salt=? WHERE staff_id=?";
+            stmtAccount = conn.prepareStatement(updateAccountSQL);
+            stmtAccount.setString(1, passwordHash);
+            stmtAccount.setString(2, salt);
+            stmtAccount.setInt(3, staffid);
+            int accRows = stmtAccount.executeUpdate();
+
+            if (accRows == 0) {
+                String username = generateUniqueUsername(name);
+                String insertAccountSQL = "INSERT INTO account (username, staff_id, hash_token, salt, args) VALUES (?, ?, ?, ?, ?)";
+                stmtAccount.close();
+                stmtAccount = conn.prepareStatement(insertAccountSQL);
+                stmtAccount.setString(1, username);
+                stmtAccount.setInt(2, staffid);
+                stmtAccount.setString(3, passwordHash);
+                stmtAccount.setString(4, salt);
+                stmtAccount.setString(5, ""); 
+                stmtAccount.executeUpdate();
             }
         }
+
+        conn.commit();
+        return true;
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        if (conn != null) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return false;
+
+    } finally {
+        try {
+            if (stmtStaff != null) stmtStaff.close();
+            if (stmtAccount != null) stmtAccount.close();
+            if (conn != null) conn.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
+}
+    public static String generateUniqueUsername(String baseUsername) throws SQLException {
+    Connection conn = dbConnection.connect();
+    String newUsername = baseUsername;
+    int counter = 1;
+
+    while (true) {
+        String query = "SELECT COUNT(*) AS cnt FROM account WHERE username = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1, newUsername);
+        ResultSet rs = ps.executeQuery();
+
+        rs.next();
+        int count = rs.getInt("cnt");
+
+        rs.close();
+        ps.close();
+
+        if (count == 0) {
+            // Không trùng, dùng username này
+            break;
+        } else {
+            // Đã trùng → thêm số vào cuối
+            newUsername = baseUsername + counter;
+            counter++;
+        }
+    }
+
+    conn.close();
+
+    // Nếu username đã bị thay đổi thì báo cho người dùng
+    if (!newUsername.equals(baseUsername)) {
+        javax.swing.JOptionPane.showMessageDialog(null,
+            "Tên bạn đã trùng, tên tài khoản của bạn là: " + newUsername);
+    }
+
+    return newUsername;
+}
 
     public static int getIdFromUsername(String username) throws SQLException {
         String query = String.format("SELECT staff_id FROM account WHERE username LIKE '%s'", username);

@@ -201,6 +201,20 @@ public class Voucher extends javax.swing.JPanel {
         try {
             java.util.Date startStr = txtstartdate.getDate();
             java.util.Date endStr = txtenddate.getDate();
+            String regrexprice = "^[0-9]+(\\.[0-9]+)?$";
+            String regrexid= "^[0-9]+$";
+            if(txtenddate.getDate()==null||txtenddate.getDate()==null){
+            JOptionPane.showMessageDialog(this, "Khong duoc de trong ngay");
+            return;
+            }
+            if(!txtprice.getText().toString().matches(regrexprice)){
+            JOptionPane.showMessageDialog(this, "gia san pham khong hop le");
+            return;
+            }
+            if(txtmasp.getText().toString().trim().length()==0||!txtmasp.getText().toString().trim().matches(regrexid)){
+            JOptionPane.showMessageDialog(this, "ma san pham khong hop le hoac khong duoc de trong");
+            return;
+            }
             int productId = Integer.parseInt(txtmasp.getText().trim());
             float newPrice = Float.parseFloat(txtprice.getText().trim());
             if (newPrice >= 0) {
@@ -215,7 +229,7 @@ public class Voucher extends javax.swing.JPanel {
             Timestamp currentDate = new Timestamp(currentDateUtil.getTime());
             Timestamp start_date = new Timestamp(startStr.getTime());
             Timestamp end_date = new Timestamp(endStr.getTime());
-            if (start_date.before(end_date) && currentDate.before(start_date)) {
+            if (start_date.before(end_date) && currentDate.before(end_date)) {
             } else {
                 JOptionPane.showMessageDialog(this, "ngay khong hop le");
                 return;

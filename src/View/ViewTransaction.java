@@ -39,7 +39,7 @@ public class ViewTransaction extends javax.swing.JPanel {
     DefaultTableModel model;
 
     public ViewTransaction() {
-        initComponents();
+         initComponents();
         model = (DefaultTableModel) tbldoanhthu.getModel();
         loaddata(vtdao.Loaddata());
         JTextFieldDateEditor editorStart = (JTextFieldDateEditor) jdtstart.getDateEditor();
@@ -49,99 +49,99 @@ public class ViewTransaction extends javax.swing.JPanel {
     }
 
     public void loaddata(ResultSet rs) {
-        model.setRowCount(0);
+      model.setRowCount(0);
 
-        try {
-            int rowCount = 0;
-            while (rs.next()) {
-                String productIds = rs.getString("product_ids");
-                String voucherIds = rs.getString("voucher_ids");
+    try {
+        int rowCount = 0;
+        while (rs.next()) {
+            String productIds = rs.getString("product_ids");
+            String voucherIds = rs.getString("voucher_ids");
 
-                System.out.println("Debug - Processing row: receipt_id = " + rs.getInt("receipt_id")
-                        + ", product_ids = [" + productIds + "], voucher_ids = [" + voucherIds + "]");
+            System.out.println("Debug - Processing row: receipt_id = " + rs.getInt("receipt_id") + 
+                             ", product_ids = [" + productIds + "], voucher_ids = [" + voucherIds + "]");
 
-                MembershipDataSet mds = new MembershipDataSet();
-                float membershipDiscount = 0;
-                try {
-                    mds = vtdao.getMembershipById(rs.getInt("membership_id"));
-                    membershipDiscount = mds.discount;
-                } catch (Exception ex) {
+            MembershipDataSet mds = new MembershipDataSet();
+            float membershipDiscount = 0;
+            try {
+                mds = vtdao.getMembershipById(rs.getInt("membership_id"));
+                membershipDiscount = mds.discount;
+            } catch (Exception ex) {}
+
+            float total = 0;
+            float totalAfterVoucher = 0;
+
+            if (!productIds.equals("0")) {
+                String[] productIdArray = productIds.split(", ");
+                for (String productId : productIdArray) {
+                    int prodId = Integer.parseInt(productId.trim());
+                    float productPrice = getProductPrice(prodId);
+                    float voucherPrice = getVoucherPrice(prodId, voucherIds);
+                    total += productPrice;
+                    totalAfterVoucher += (voucherPrice != -1 ? voucherPrice : productPrice);
                 }
-
-                float total = 0;
-                float totalAfterVoucher = 0;
-
-                if (!productIds.equals("0")) {
-                    String[] productIdArray = productIds.split(", ");
-                    for (String productId : productIdArray) {
-                        int prodId = Integer.parseInt(productId.trim());
-                        float productPrice = getProductPrice(prodId);
-                        float voucherPrice = getVoucherPrice(prodId, voucherIds);
-                        total += productPrice;
-                        totalAfterVoucher += (voucherPrice != -1 ? voucherPrice : productPrice);
-                    }
-                }
-
-                totalAfterVoucher = (totalAfterVoucher / 100) * (100 - membershipDiscount);
-
-                model.addRow(new Object[]{
-                    rs.getInt("receipt_id"),
-                    rs.getTimestamp("receipt_date").toString(),
-                    productIds,
-                    voucherIds,
-                    rs.getInt("membership_id"),
-                    rs.getInt("staff_id"),
-                    (total - totalAfterVoucher) * -1,
-                    totalAfterVoucher
-                });
-                rowCount++;
             }
-            System.out.println("Debug - Total rows loaded: " + rowCount);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Debug - Error in loaddata: " + e.getMessage());
+
+            totalAfterVoucher = (totalAfterVoucher / 100) * (100 - membershipDiscount);
+
+            model.addRow(new Object[]{
+                rs.getInt("receipt_id"),
+                rs.getTimestamp("receipt_date").toString(),
+                productIds,
+                voucherIds,
+                rs.getInt("membership_id"),
+                rs.getInt("staff_id"),
+                (total - totalAfterVoucher) * -1,
+                totalAfterVoucher
+            });
+            rowCount++;
         }
+        System.out.println("Debug - Total rows loaded: " + rowCount);
+    } catch (Exception e) {
+        e.printStackTrace();
+        System.out.println("Debug - Error in loaddata: " + e.getMessage());
+    }
     }
 
 // Phương thức giả để lấy giá sản phẩm (cần triển khai thực tế)
     private float getProductPrice(int productId) {
         // Truy vấn bảng product để lấy product_price
-        try {
-            Connection conn = dbConnection.connect();
-            String query = "SELECT product_price FROM product WHERE product_id = ?";
-            PreparedStatement ps = conn.prepareStatement(query);
-            ps.setInt(1, productId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getFloat("product_price");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+     // Truy vấn bảng product để lấy product_price
+   try {
+        Connection conn = dbConnection.connect();
+        String query = "SELECT product_price FROM product WHERE product_id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, productId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getFloat("product_price");
         }
-        return 0;
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return 0;
     }
 
 // Phương thức giả để lấy giá sau voucher (cần triển khai thực tế)
     private float getVoucherPrice(int productId, String voucherIds) {
-        // Nếu không có voucherIds, trả về -1 ngay lập tức
-        if (voucherIds == null || voucherIds.trim().isEmpty() || voucherIds.equals("0")) {
-            return -1;
-        }
-
-        try (Connection conn = dbConnection.connect(); PreparedStatement ps = conn.prepareStatement(
-                "SELECT new_product_price FROM voucher WHERE product_id = ? AND voucher_id IN (SELECT value FROM STRING_SPLIT(?, ','))")) {
-
-            ps.setInt(1, productId);
-            ps.setString(2, voucherIds);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getFloat("new_product_price");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+         if (voucherIds == null || voucherIds.trim().isEmpty() || voucherIds.equals("0")) {
         return -1;
+    }
+
+    try (Connection conn = dbConnection.connect();
+         PreparedStatement ps = conn.prepareStatement(
+             "SELECT new_product_price FROM voucher WHERE product_id = ? AND voucher_id IN (SELECT value FROM STRING_SPLIT(?, ','))")) {
+        
+        ps.setInt(1, productId);
+        ps.setString(2, voucherIds);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getFloat("new_product_price");
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return -1;
     }
 
     /**
@@ -286,9 +286,7 @@ public class ViewTransaction extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        model.setRowCount(0);
-
-        java.util.Date startdate = jdtstart.getDate();
+     java.util.Date startdate = jdtstart.getDate();
         java.util.Date enddate = jdtend.getDate();
 
         // Validate rỗng
@@ -298,12 +296,8 @@ public class ViewTransaction extends javax.swing.JPanel {
         }
 
         // Nếu chỉ có 1 ngày thì gán cho ngày còn lại
-        if (startdate == null) {
-            startdate = enddate;
-        }
-        if (enddate == null) {
-            enddate = startdate;
-        }
+        if (startdate == null) startdate = enddate;
+        if (enddate == null) enddate = startdate;
 
         // Validate ngày kết thúc < ngày bắt đầu
         if (enddate.before(startdate)) {
@@ -339,6 +333,7 @@ public class ViewTransaction extends javax.swing.JPanel {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         jdtstart.setDate(null);
         jdtend.setDate(null);
+        loaddata(vtdao.Loaddata());
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed

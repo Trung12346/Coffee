@@ -230,30 +230,38 @@ public class SanPham extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnnaddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnnaddActionPerformed
-        // TODO add your handling code here:
-        if(txtten.getText().toString().trim().length()==0){
-            JOptionPane.showMessageDialog(this, "Vui long nhap san pham");
+       if (txtten.getText().trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Vui lòng nhập tên sản phẩm");
         return;
-        }else if(txtgia.getText().toString().trim().length()==0){
+    } else if (txtgia.getText().trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Vui lòng nhập giá sản phẩm");
         return;
-        }else{
-        String ten = txtten.getText();
-        Float gia = Float.parseFloat(txtgia.getText());
-        if(gia <=0){
-        JOptionPane.showMessageDialog(this, "Gia khong hop le");
-        return;
+    } else {
+        String giaInput = txtgia.getText().trim();
+        // Check if the input contains only digits, optional decimal point, and optional negative sign
+        if (!giaInput.matches("^-?\\d*\\.?\\d+$")) {
+            JOptionPane.showMessageDialog(this, "giá không hợp lệ ,phải là số nguyên");
+            return;
         }
-        boolean rs=spdao.add(ten,gia);
         try {
-            if(rs){
-                JOptionPane.showMessageDialog(this, "them thanh cong");
+            Float gia = Float.parseFloat(giaInput);
+            if (gia <= 0) {
+                JOptionPane.showMessageDialog(this, "Giá không hợp lệ, phải lớn hơn 0");
+                return;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "them that bai");
-        }
+            String ten = txtten.getText().trim();
+            boolean rs = spdao.add(ten, gia);
+            if (rs) {
+                JOptionPane.showMessageDialog(this, "Thêm thành công");
+            } else {
+                JOptionPane.showMessageDialog(this, "Thêm thất bại");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Giá sản phẩm không hợp lệ");
+            return;
         }
         hienthi();
+    }
     }//GEN-LAST:event_btnnaddActionPerformed
 
     private void txtgiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtgiaActionPerformed

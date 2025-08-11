@@ -420,9 +420,9 @@ public class Home extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        ChamCong frameChamCong;
+        ChamCongFixed frameChamCong;
         try {
-            frameChamCong = new ChamCong();
+            frameChamCong = new ChamCongFixed();
             frameChamCong.setSize(1498, 867);
             frameChamCong.setLocation(0, 0);
 

@@ -4,9 +4,13 @@
  */
 package Service;
 
+import Model.JSON;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.sql.*;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -114,5 +118,73 @@ public class CongDAO {
             e.printStackTrace();
         }
     }
-
+    public ArrayList<String[]> getAllCong() throws SQLException {
+        ArrayList ids = new ArrayList();
+        java.time.LocalDate minDate = null;
+        java.time.LocalDate maxDate = null;
+        ArrayList<String[]> cong = new ArrayList();
+        
+        
+        String query = "SELECT staff_id FROM cong GROUP BY staff_id";
+        Statement stm = conn.createStatement();
+        ResultSet rs = stm.executeQuery(query);
+        while(rs.next()) {
+            ids.add(rs.getInt("staff_id"));
+        }
+        
+        query = "SELECT MIN(date) AS min_date FROM cong";
+        stm = conn.createStatement();
+        rs = stm.executeQuery(query);
+        rs.next();
+        minDate = Date.valueOf(rs.getString("min_date")).toLocalDate();
+        
+        query = "SELECT MAX(date) AS max_date FROM cong";
+        stm = conn.createStatement();
+        rs = stm.executeQuery(query);
+        rs.next();
+        maxDate = Date.valueOf(rs.getString("max_date")).toLocalDate();
+        
+        long dayDifference = ChronoUnit.DAYS.between(minDate, maxDate);
+        for (int i = 0; i < dayDifference + 1; i++) {
+            query = String.format("SELECT shows_up FROM cong WHERE date LIKE '%s'", minDate.plusDays(i));
+            stm = conn.createStatement();
+            rs = stm.executeQuery(query);
+            String[] congOfDay = new String[ids.size()];
+            int x = 0;
+            while(rs.next()) {
+                congOfDay[x++] = rs.getString("shows_up");
+            }
+            cong.add(congOfDay);
+        }
+        
+        return cong;
+    }
+    public String[] getUsernames() throws SQLException {
+        String query = "SELECT COUNT(username) AS coun FROM account";
+        Statement stm = conn.createStatement();
+        ResultSet rs = stm.executeQuery(query);
+        rs.next();
+        int size = rs.getInt("coun");
+        
+        String[] headers = new String[size];
+        
+        query = "SELECT username FROM account ORDER BY staff_id ASC";
+        stm = conn.createStatement();
+        rs = stm.executeQuery(query);
+        
+        int i = 0;
+        while(rs.next()) {
+            headers[i++] = rs.getString("username");
+        }
+        
+        return headers;
+        
+        
+    }
+    public static void main(String[] args) throws SQLException, JsonProcessingException {
+        CongDAO dao = new CongDAO();
+        ArrayList cong = dao.getAllCong();
+        System.out.println(JSON.StringifyJSON(cong));
+        System.out.println(Arrays.toString(dao.getUsernames()));
+    }
 }

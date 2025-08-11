@@ -259,6 +259,11 @@ public class Staff extends javax.swing.JPanel {
         jRadioButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jRadioButton1.setForeground(new java.awt.Color(153, 102, 0));
         jRadioButton1.setText("Quản Lý");
+        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton1ActionPerformed(evt);
+            }
+        });
 
         buttonGroup1.add(jRadioButton2);
         jRadioButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -299,14 +304,13 @@ public class Staff extends javax.swing.JPanel {
                             .addComponent(jLabel7)
                             .addComponent(jLabel3))
                         .addGap(33, 33, 33)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtpassword)
+                            .addComponent(txttuoi, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jRadioButton2)
-                                .addGap(18, 18, 18)
-                                .addComponent(jRadioButton1))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(txtpassword)
-                                .addComponent(txttuoi, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)))))
+                                .addComponent(jRadioButton1)
+                                .addGap(25, 25, 25)
+                                .addComponent(jRadioButton2)))))
                 .addGap(124, 124, 124)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -372,7 +376,6 @@ public class Staff extends javax.swing.JPanel {
                                     .addComponent(txtemail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGap(139, 139, 139))
                         .addGroup(layout.createSequentialGroup()
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel5)
                                 .addComponent(txtphone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -383,9 +386,9 @@ public class Staff extends javax.swing.JPanel {
                                 .addComponent(btxoa, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(btload, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRadioButton2))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jRadioButton2)
+                    .addComponent(jRadioButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -402,15 +405,35 @@ public class Staff extends javax.swing.JPanel {
     private void btthemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btthemActionPerformed
         try {
             java.util.Date date = txttuoi.getDate(); // Lấy đối tượng java.util.Date
+//            if(txtmanhanvien.getText().toString().trim().length()==0){
+//                JOptionPane.showMessageDialog(this, "khong duoc de trong ma nhan vien");
+//            return;
+//            }
+            if(txtten.getText().toString().trim().length()==0){
+            JOptionPane.showMessageDialog(this, "Ten khong duoc de trong");
+            return;
+            }
+            if(txtpassword.getText().toString().trim().length()==0){
+            JOptionPane.showMessageDialog(this, "Mat khau khong hop le");
+            return;
+            }
+            if(txttuoi.getDate()==null){
+            JOptionPane.showMessageDialog(this, "khong de trong ngay sinh");
+            return;
+            }
+            if(txtemail.getText().toString().trim().length()==0){
+            JOptionPane.showMessageDialog(this, "email khong hop le");
+            return;
+            }
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
             String ngaysinhStr = sdf.format(date);
-
+            
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             LocalDate ngaysinh = LocalDate.parse(ngaysinhStr, formatter);
 
             LocalDate now = LocalDate.now();
             long tuoi = ChronoUnit.YEARS.between(ngaysinh, now);
-
+            String emailRegex = "^[\\w.-]+@[\\w.-]+\\.[A-Za-z]{2,6}$";
             String identitycard = txtcccd.getText().trim();
             String regex = "^[0-9]{12}$";
             String regexphone = "^[0-9]{9,10}$";
@@ -418,7 +441,10 @@ public class Staff extends javax.swing.JPanel {
             String phone = txtphone.getText().trim();
             String name = txtten.getText().trim();
             String password = txtpassword.getText();
-            
+            if(!email.matches(emailRegex)){
+            JOptionPane.showMessageDialog(this, "Email khong hop le");
+            return;
+            }
             for (int i = 0; i < tbnhanvien.getRowCount(); i++) {
                 if (identitycard.equals(model.getValueAt(i, 6).toString())||phone.equals(model.getValueAt(i, 5))) {
                     JOptionPane.showMessageDialog(this, "Ten can cuoc cong dan hoac sdt ko duoc trung");
@@ -450,6 +476,7 @@ public class Staff extends javax.swing.JPanel {
                 javax.swing.JOptionPane.showMessageDialog(this, "Khong de trong quyen");
                 throw new Exception();
             }
+            
             boolean added = nhanvienDAO.addStaff(name, tuoi, email, phone, args, password, identitycard, ngaysinh);
             if (added) {
                 javax.swing.JOptionPane.showMessageDialog(this, "Thêm nhân viên thành công!");
@@ -463,37 +490,94 @@ public class Staff extends javax.swing.JPanel {
         }    }//GEN-LAST:event_btthemActionPerformed
 
     private void btsuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btsuaActionPerformed
-        try {
-            java.util.Date date = txttuoi.getDate(); // Lấy đối tượng java.util.Date
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-            String ngaysinhStr = sdf.format(date);
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-            LocalDate ngaysinh = LocalDate.parse(ngaysinhStr, formatter);
-
-            LocalDate now = LocalDate.now();
-            int age = (int) ChronoUnit.YEARS.between(ngaysinh, now);
-
-            int staffId = Integer.parseInt(txtmanhanvien.getText().trim());
-            String email = txtemail.getText().trim();
-            String phone = txtphone.getText().trim();
-            if (email.length() > 100 || phone.length() > 10) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Email hoặc phone quá dài!");
-                return;
+       try {
+           String regex = "^[0-9]{12}$";
+           String regexphone = "^[0-9]{9,10}$";
+//            if(txtmanhanvien.getText().toString().trim().length()==0){
+//                JOptionPane.showMessageDialog(this, "khong duoc de trong ma nhan vien");
+//            return;
+//            }
+            if(txtten.getText().toString().trim().length()==0){
+            JOptionPane.showMessageDialog(this, "Ten khong duoc de trong");
+            return;
             }
-            boolean updated = nhanvienDAO.updateStaff(staffId, age, email, phone);
-            if (updated) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Sửa nhân viên thành công!");
-                loadDataToTable(); // Tải lại JTable
-                clearFields();
-            } else {
-                javax.swing.JOptionPane.showMessageDialog(this, "Sửa nhân viên thất bại!");
+            if(txtpassword.getText().toString().trim().length()==0){
+            JOptionPane.showMessageDialog(this, "Mat khau khong hop le");
+            return;
             }
-        } catch (NumberFormatException e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "ID và tuổi phải là số nguyên!");
+            if(txttuoi.getDate()==null){
+            JOptionPane.showMessageDialog(this, "khong de trong ngay sinh");
+            return;
+            }
+            if(txtemail.getText().toString().trim().length()==0){
+            JOptionPane.showMessageDialog(this, "email khong hop le");
+            return;
+            }
+    java.util.Date date = txttuoi.getDate();
+    if (date == null) {
+        JOptionPane.showMessageDialog(this, "Ngày sinh không được để trống!");
+        return;
+    }
+    String emailRegex = "^[\\w.-]+@[\\w.-]+\\.[A-Za-z]{2,6}$";
+    String ten = txtten.getText().trim();
+    String cccd = txtcccd.getText().trim();
+    String email = txtemail.getText().trim();
+    String phone = txtphone.getText().trim();
+    String password = txtpassword.getText(); 
+    String identitycard = txtcccd.getText().trim();
+    for (int i = 0; i < tbnhanvien.getRowCount(); i++) {
+                if (identitycard.equals(model.getValueAt(i, 6).toString())||phone.equals(model.getValueAt(i, 5))) {
+                    JOptionPane.showMessageDialog(this, "Ten can cuoc cong dan hoac sdt ko duoc trung");
+                    return;
+                }
+            }
+    if(!email.matches(emailRegex)){
+    JOptionPane.showMessageDialog(this, "Email khong hop le");
+    return;
+    }
+    if(!phone.matches(regexphone)){
+    JOptionPane.showMessageDialog(this, "so dien thoai khong hop le");
+    return;
+    }
+    if(!identitycard.matches(regex)){
+    JOptionPane.showMessageDialog(this, "cccd khong hop le");
+    return;
+    }
+    if (email.length() > 100 || phone.length() > 10) {
+        JOptionPane.showMessageDialog(this, "Email hoặc số điện thoại quá dài!");
+        return;
+    }
 
-        } catch (SQLException ex) {
-            Logger.getLogger(Staff.class.getName()).log(Level.SEVERE, null, ex);
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+    String ngaysinhStr = sdf.format(date);
+    LocalDate ngaysinh = LocalDate.parse(ngaysinhStr, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+    int age = (int) ChronoUnit.YEARS.between(ngaysinh, LocalDate.now());
+    if(age <=16){
+    JOptionPane.showMessageDialog(this, "tuoi khong hop le");
+    return;
+    }
+    int staffId;
+    try {
+        staffId = Integer.parseInt(txtmanhanvien.getText().trim());
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "ID nhân viên phải là số nguyên!");
+        return;
+    }
+
+    boolean updated = nhanvienDAO.updateStaff(ten, age, email, phone, password, cccd, ngaysinh, staffId);
+
+    if (updated) {
+        JOptionPane.showMessageDialog(this, "Sửa nhân viên thành công!");
+        loadDataToTable();
+        clearFields();
+    } else {
+        JOptionPane.showMessageDialog(this, "Sửa nhân viên thất bại!");
+    }
+
+} catch (SQLException ex) {
+    Logger.getLogger(Staff.class.getName()).log(Level.SEVERE, null, ex);
+    JOptionPane.showMessageDialog(this, "Lỗi cơ sở dữ liệu: " + ex.getMessage());
+        
         }    }//GEN-LAST:event_btsuaActionPerformed
 
     private void btloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btloadActionPerformed
