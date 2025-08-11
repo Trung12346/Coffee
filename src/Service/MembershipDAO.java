@@ -58,6 +58,8 @@ public class MembershipDAO {
             String query = String.format("SELECT * FROM membership WHERE phone LIKE '%s'", phone);
             Statement stm = conn.createStatement();
             ResultSet rs = stm.executeQuery(query);
+            rs.next();
+            rs.getInt("membership_id");
             return true;
             
         } catch (SQLException ex) {

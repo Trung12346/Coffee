@@ -76,7 +76,18 @@ public class RecipeManagement extends javax.swing.JPanel {
 //                System.out.println("Old   : " + tcl.getOldValue());
 //                System.out.println("New   : " + tcl.getNewValue());
                 if (tcl.getColumn() == 1) {
-                    table_2Rows.get(tcl.getRow()).quantity = (float) tcl.getNewValue();
+                    System.out.println("EDITING COLUMN 1");
+                    if (table_2Rows.get(tcl.getRow()).unit.equals("cái")) {
+                        System.out.println("CÁI");
+                        if (Math.floor(Double.parseDouble(tcl.getNewValue().toString())) != Double.parseDouble(tcl.getNewValue().toString())) {
+                            System.out.println("DOESNT MATCH");
+                            table_2Rows.get(tcl.getRow()).quantity = Float.parseFloat(tcl.getOldValue().toString());
+                            model_2.setValueAt(tcl.getOldValue(), tcl.getRow(), 1);
+                        }
+                    } else {
+                        table_2Rows.get(tcl.getRow()).quantity = (float) tcl.getNewValue();
+                    }
+
                 } else if (tcl.getColumn() == 0) {
                     IngredientDataSet ids = searchIngredient((String) tcl.getNewValue());
                     if (ids != null) {
@@ -294,12 +305,14 @@ public class RecipeManagement extends javax.swing.JPanel {
         System.out.println(table_2.getSelectedRow());
         int selectedRow = table_2.getSelectedRow();
         deletedItems.add(table_2Rows.get(selectedRow).id);
-        
-        if (selectedRow >= 0) {
-            table_2Rows.remove(table_2.getSelectedRow());
-        }
-        loadTable_2(table_2Rows);
-        
+        System.out.println("DELETING ITEMS: ");
+        System.out.println(Arrays.toString(deletedItems.toArray()));
+//        if (selectedRow > -1) {
+//            table_2Rows.remove(selectedRow);
+//        }
+//        loadTable_2(table_2Rows);
+        model_2.removeRow(selectedRow);
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -307,6 +320,12 @@ public class RecipeManagement extends javax.swing.JPanel {
         try {
             for (int i = 0; i < table_2Rows.size(); i++) {
                 RMTable2 row = table_2Rows.get(i);
+                if (row.unit.equals("cái")) {
+                    if (Math.floor(Double.parseDouble(String.valueOf(row.quantity))) != Double.parseDouble(String.valueOf(row.quantity))) {
+                        JOptionPane.showMessageDialog(this, "Số lượng không hợp lệ");
+                        return;
+                    }
+                }
                 if (row.id == 0) {
                     if (row.quantity <= 0 || row.label.equals("???")) {
                         throw new Exception("invalid input");
@@ -326,7 +345,7 @@ public class RecipeManagement extends javax.swing.JPanel {
             table_2Rows.forEach(row -> {
                 try {
                     if (row.id > 0) {
-
+                        System.out.println("UPDATING RECIPE");
                         updateRecipe(selectedProduct, row.id, row.quantity, row.unit, deletedItems);
                         deletedItems = new ArrayList();
 

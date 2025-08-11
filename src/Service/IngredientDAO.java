@@ -103,25 +103,37 @@ public class IngredientDAO {
         Locale.setDefault(Locale.US);
         Connection conn = dbConnection.connect();
         Statement stm = conn.createStatement();
-
+        System.out.println("UPDATE RUN 1");
         String query = String.format("UPDATE product_ingredients SET quantity = %.3f WHERE product_id = %d AND ingredient_id = %d", quantity, productId, ingredientId);
         System.out.println(query);
         stm.executeUpdate(query);
-
+        System.out.println("UPDATE RUN 2");
         query = String.format("UPDATE ingredients SET unit = N'%s' WHERE ingredient_id = %d", unit, ingredientId);
         System.out.println(query);
         stm = conn.createStatement();
         stm.executeUpdate(query);
-        
-        deletedItems.forEach(item -> {
+        System.out.println("UPDATE RUN 3");
+//        deletedItems.forEach(item -> {
+//            try {
+//                String query_1 = String.format("DELETE FROM product_ingredients WHERE product_id = %d AND ingredient_id = %d", productId, item);
+//                System.out.println(query_1);
+//                Statement stm_1 = conn.createStatement();
+//                stm_1.executeUpdate(query_1);
+//            } catch (SQLException ex) {
+//                Logger.getLogger(IngredientDAO.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        });
+        for(int i = 0; i < deletedItems.size(); i++) {
+            System.out.println("RUNNING FOR LOOP");
             try {
-                String query_1 = String.format("DELETE FROM product_ingredients WHERE product_id = %d AND ingredient_id = %d", productId, item);
+                String query_1 = String.format("DELETE FROM product_ingredients WHERE product_id = %d AND ingredient_id = %d", productId, deletedItems.get(i));
+                System.out.println(query_1);
                 Statement stm_1 = conn.createStatement();
                 stm_1.executeUpdate(query_1);
             } catch (SQLException ex) {
                 Logger.getLogger(IngredientDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
-        });
+        }
     }
 
     public static IngredientDataSet searchIngredient(String label) {

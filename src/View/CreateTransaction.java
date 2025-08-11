@@ -519,7 +519,7 @@ public class CreateTransaction extends javax.swing.JPanel {
 
         jScrollPane6.setViewportView(jScrollPane7);
 
-        jPanel2.setBackground(new java.awt.Color(255, 255, 204));
+        jPanel2.setBackground(new java.awt.Color(255, 255, 225));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);

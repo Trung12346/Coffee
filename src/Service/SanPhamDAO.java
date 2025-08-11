@@ -52,6 +52,8 @@ public class SanPhamDAO {
             String query = String.format("SELECT * FROM product WHERE product_name LIKE N'%s'", name);
             Statement stm = conn.createStatement();
             ResultSet rs = stm.executeQuery(query);
+            rs.next();
+            rs.getInt("product_id");
             return true;
             
         } catch (SQLException ex) {
