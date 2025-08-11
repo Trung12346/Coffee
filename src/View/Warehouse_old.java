@@ -30,11 +30,12 @@ public class Warehouse_old extends javax.swing.JPanel {
         model_1 = (DefaultTableModel) jTable1.getModel();
         table_1Rows = getIngredients();
         loadTable_1(table_1Rows);
+        jTextField2.setVisible(false);
     }
     public void loadTable_1(ArrayList<STable1> rows) {
         model_1.setRowCount(0);
         rows.forEach(row -> {
-            model_1.addRow(new Object[]{row.ingredientLabel});
+            model_1.addRow(new Object[]{row.ingredientLabel, row.unit});
         });
     }
     private void loadTableData() {
@@ -64,6 +65,7 @@ public class Warehouse_old extends javax.swing.JPanel {
         jTable1 = new javax.swing.JTable();
         jTextField1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
 
         setBackground(java.awt.SystemColor.info);
 
@@ -127,20 +129,20 @@ public class Warehouse_old extends javax.swing.JPanel {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null},
-                {null},
-                {null},
-                {null}
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
             },
             new String [] {
-                "Nguyên liệu"
+                "Nguyên liệu", "Đơn vị"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class
+                java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false
+                false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -176,23 +178,27 @@ public class Warehouse_old extends javax.swing.JPanel {
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(88, 88, 88)
+                                    .addComponent(jLabel1))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(51, 51, 51)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel2)
+                                        .addComponent(jLabel4)
+                                        .addComponent(jLabel3))
+                                    .addGap(26, 26, 26)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(txtsoluong)
+                                        .addComponent(txtten)
+                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addContainerGap()
+                                    .addComponent(btthem)))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(88, 88, 88)
-                                .addComponent(jLabel1))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(51, 51, 51)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel3))
-                                .addGap(26, 26, 26)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtsoluong)
-                                    .addComponent(txtten)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(btthem)))
+                                .addGap(213, 213, 213)
+                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 814, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -221,6 +227,8 @@ public class Warehouse_old extends javax.swing.JPanel {
                             .addComponent(jLabel4))
                         .addGap(40, 40, 40)
                         .addComponent(btthem)
+                        .addGap(15, 15, 15)
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -234,6 +242,14 @@ public class Warehouse_old extends javax.swing.JPanel {
         int id = Integer.parseInt(jTextField1.getText());
         //String time = txttime.getText().trim(); 
         WarehouseDAO dao = new WarehouseDAO();
+        
+        if(jTextField2.getText().equals("cái")) {
+            if(Math.floor(Double.parseDouble(soluong)) != Double.parseDouble(soluong)) {
+                JOptionPane.showMessageDialog(this, "Số lượng không hợp lệ");
+                return;
+            }
+        }
+        
         if (dao.addWarehouseLog(ten, soluong, id)) {
             JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
             dao.loadTableData((DefaultTableModel) tbchamcong.getModel());
@@ -252,6 +268,7 @@ public class Warehouse_old extends javax.swing.JPanel {
         jTextField1.setText(Integer.toString(table_1Rows.get(selectedRow).ingredientId));
         txtten.setText(table_1Rows.get(selectedRow).ingredientLabel);
         txtsoluong.setText("1");
+        jTextField2.setText(table_1Rows.get(selectedRow).unit);
     }//GEN-LAST:event_jTable1MouseClicked
 
     /**
@@ -303,6 +320,7 @@ public class Warehouse_old extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     private javax.swing.JTable tbchamcong;
     private javax.swing.JTextField txtsoluong;
     private javax.swing.JTextField txtten;

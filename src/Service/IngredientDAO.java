@@ -99,7 +99,7 @@ public class IngredientDAO {
         return rows;
     }
 
-    public static void updateRecipe(int productId, int ingredientId, float quantity, String unit) throws SQLException {
+    public static void updateRecipe(int productId, int ingredientId, float quantity, String unit, ArrayList deletedItems) throws SQLException {
         Locale.setDefault(Locale.US);
         Connection conn = dbConnection.connect();
         Statement stm = conn.createStatement();
@@ -112,6 +112,16 @@ public class IngredientDAO {
         System.out.println(query);
         stm = conn.createStatement();
         stm.executeUpdate(query);
+        
+        deletedItems.forEach(item -> {
+            try {
+                String query_1 = String.format("DELETE FROM product_ingredients WHERE product_id = %d AND ingredient_id = %d", productId, item);
+                Statement stm_1 = conn.createStatement();
+                stm_1.executeUpdate(query_1);
+            } catch (SQLException ex) {
+                Logger.getLogger(IngredientDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
 
     public static IngredientDataSet searchIngredient(String label) {

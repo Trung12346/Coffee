@@ -11,10 +11,12 @@ package Model;
 public class STable1 {
     public int ingredientId;
     public String ingredientLabel;
+    public String unit;
 
-    public STable1(int ingredientId, String ingredientLabel) {
+    public STable1(int ingredientId, String ingredientLabel, String unit) {
         this.ingredientId = ingredientId;
         this.ingredientLabel = ingredientLabel;
+        this.unit = unit;
     }
 
     

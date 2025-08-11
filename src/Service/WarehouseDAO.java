@@ -24,7 +24,7 @@ public class WarehouseDAO {
         ResultSet rs = stm.executeQuery(query);
         ArrayList<STable1> table_1Rows = new ArrayList();
         while(rs.next()) {
-            table_1Rows.add(new STable1(rs.getInt("ingredient_id"), rs.getString("ingredient_label")));
+            table_1Rows.add(new STable1(rs.getInt("ingredient_id"), rs.getString("ingredient_label"), rs.getString("unit")));
         }
         
         return table_1Rows;

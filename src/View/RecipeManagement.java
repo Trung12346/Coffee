@@ -37,6 +37,7 @@ public class RecipeManagement extends javax.swing.JPanel {
     DefaultTableModel model_2;
     DefaultTableModel model_1;
     int selectedProduct = 0;
+    ArrayList deletedItems = new ArrayList();
     /**
      * Creates new form RecipeManagement
      */
@@ -292,10 +293,13 @@ public class RecipeManagement extends javax.swing.JPanel {
 
         System.out.println(table_2.getSelectedRow());
         int selectedRow = table_2.getSelectedRow();
+        deletedItems.add(table_2Rows.get(selectedRow).id);
+        
         if (selectedRow >= 0) {
             table_2Rows.remove(table_2.getSelectedRow());
         }
         loadTable_2(table_2Rows);
+        
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -323,8 +327,8 @@ public class RecipeManagement extends javax.swing.JPanel {
                 try {
                     if (row.id > 0) {
 
-                        updateRecipe(selectedProduct, row.id, row.quantity, row.unit);
-                        
+                        updateRecipe(selectedProduct, row.id, row.quantity, row.unit, deletedItems);
+                        deletedItems = new ArrayList();
 
                     } else {
                         addProductIngredient(selectedProduct, row.quantity, row.label, row.unit);
