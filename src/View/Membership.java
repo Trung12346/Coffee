@@ -172,6 +172,12 @@ public class Membership extends JPanel {
             }
         });
 
+        jScrollPane1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jScrollPane1MouseClicked(evt);
+            }
+        });
+
         tblmembership.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
@@ -189,6 +195,11 @@ public class Membership extends JPanel {
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+        });
+        tblmembership.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblmembershipMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tblmembership);
@@ -277,6 +288,17 @@ public class Membership extends JPanel {
 
 
     }//GEN-LAST:event_btnnsigninActionPerformed
+
+    private void jScrollPane1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jScrollPane1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jScrollPane1MouseClicked
+
+    private void tblmembershipMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblmembershipMouseClicked
+        // TODO add your handling code here:
+         int selectedrow = tblmembership.getSelectedRow();
+        txtten.setText(model.getValueAt(selectedrow, 1).toString());
+        txtsdt.setText(model.getValueAt(selectedrow, 2).toString());
+    }//GEN-LAST:event_tblmembershipMouseClicked
 
     /**
      * @param args the command line arguments

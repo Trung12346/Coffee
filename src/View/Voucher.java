@@ -14,6 +14,7 @@ import java.awt.Color;
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -107,6 +108,12 @@ public class Voucher extends javax.swing.JPanel {
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
+            }
+        });
+
+        jScrollPane2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jScrollPane2MouseClicked(evt);
             }
         });
 
@@ -324,6 +331,26 @@ public class Voucher extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jScrollPane2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jScrollPane2MouseClicked
+        // TODO add your handling code here:
+   int selectedRow = tblvoucher.getSelectedRow();
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // đúng format trong Model
+
+try {
+    java.util.Date startDate = sdf.parse((String) Model.getValueAt(selectedRow, 1));
+    java.util.Date endDate   = sdf.parse((String) Model.getValueAt(selectedRow, 2));
+
+    txtstartdate.setDate(startDate);
+    txtenddate.setDate(endDate);
+} catch (ParseException e) {
+    e.printStackTrace();
+}
+
+txtprice.setText(String.valueOf(Model.getValueAt(selectedRow, 4)));
+txtmasp.setText(String.valueOf(Model.getValueAt(selectedRow, 3)));
+
+    }//GEN-LAST:event_jScrollPane2MouseClicked
 
     /**
      * @param args the command line arguments

@@ -526,11 +526,16 @@ public class Staff extends javax.swing.JPanel {
     String password = txtpassword.getText(); 
     String identitycard = txtcccd.getText().trim();
     for (int i = 0; i < tbnhanvien.getRowCount(); i++) {
-                if (identitycard.equals(model.getValueAt(i, 6).toString())||phone.equals(model.getValueAt(i, 5))) {
-                    JOptionPane.showMessageDialog(this, "Ten can cuoc cong dan hoac sdt ko duoc trung");
-                    return;
-                }
-            }
+    int selectedRow = tbnhanvien.getSelectedRow();
+        if (i == selectedRow) {
+        continue; // bỏ qua dòng đang sửa
+    }
+    if (identitycard.equals(model.getValueAt(i, 6).toString()) 
+        || phone.equals(model.getValueAt(i, 5).toString())) {
+        JOptionPane.showMessageDialog(this, "CCCD hoặc SĐT không được trùng!");
+        return;
+    }
+}
     if(!email.matches(emailRegex)){
     JOptionPane.showMessageDialog(this, "Email khong hop le");
     return;
