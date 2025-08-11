@@ -80,6 +80,7 @@ public class Voucher extends javax.swing.JPanel {
         txtmasp = new javax.swing.JTextField();
         txtstartdate = new com.toedter.calendar.JDateChooser();
         txtenddate = new com.toedter.calendar.JDateChooser();
+        jButton2 = new javax.swing.JButton();
 
         setBackground(java.awt.SystemColor.info);
 
@@ -134,6 +135,16 @@ public class Voucher extends javax.swing.JPanel {
         jLabel5.setForeground(new java.awt.Color(153, 102, 0));
         jLabel5.setText("Mã Sản Phẩm:");
 
+        jButton2.setBackground(new java.awt.Color(153, 102, 0));
+        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButton2.setForeground(java.awt.SystemColor.info);
+        jButton2.setText("Sửa");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -155,15 +166,14 @@ public class Voucher extends javax.swing.JPanel {
                             .addComponent(txtprice, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtenddate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
                             .addComponent(txtstartdate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtmasp))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 583, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(131, 131, 131))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel2))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(txtmasp)))
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 583, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(131, 131, 131))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -175,7 +185,7 @@ public class Voucher extends javax.swing.JPanel {
                     .addComponent(txtstartdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtenddate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -184,21 +194,90 @@ public class Voucher extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtprice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
-                        .addGap(18, 18, 18))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtmasp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5))
+                        .addGap(35, 35, 35))
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(26, 26, 26)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtmasp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addGap(35, 35, 35)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(32, 32, 32)))
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 581, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-try {
+        try {
+            java.util.Date startStr = txtstartdate.getDate();
+            java.util.Date endStr = txtenddate.getDate();
+            String regrexprice = "^[0-9]+(\\.[0-9]+)?$";
+            String regrexid= "^[0-9]+$";
+            if(txtenddate.getDate()==null||txtenddate.getDate()==null){
+            JOptionPane.showMessageDialog(this, "Khong duoc de trong ngay");
+            return;
+            }
+            if(!txtprice.getText().toString().matches(regrexprice)){
+            JOptionPane.showMessageDialog(this, "gia san pham khong hop le");
+            return;
+            }
+            if(txtmasp.getText().toString().trim().length()==0||!txtmasp.getText().toString().trim().matches(regrexid)){
+            JOptionPane.showMessageDialog(this, "ma san pham khong hop le hoac khong duoc de trong");
+            return;
+            }
+            int productId = Integer.parseInt(txtmasp.getText().trim());
+            float newPrice = Float.parseFloat(txtprice.getText().trim());
+            if (newPrice >= 0) {
+            } else {
+                JOptionPane.showMessageDialog(this, "Gia khong hop le");
+                return;
+            }
+            // Định dạng ngày người dùng nhập: dd/MM/yyyy
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            sdf.setLenient(false);
+            java.util.Date currentDateUtil = new Date();
+            Timestamp currentDate = new Timestamp(currentDateUtil.getTime());
+            Timestamp start_date = new Timestamp(startStr.getTime());
+            Timestamp end_date = new Timestamp(endStr.getTime());
+            if (start_date.before(end_date) && currentDate.before(end_date)) {
+            } else {
+                JOptionPane.showMessageDialog(this, "ngay khong hop le");
+                return;
+            }
+            for(int i = 0; i < validation.size(); i++) {
+                if(productId == validation.get(i).productId) {
+                    if(start_date.before(validation.get(i).endDate)) {
+                        JOptionPane.showMessageDialog(this, "voucher cho san pham nay chua het han");
+                        return;
+                    }
+                }
+            }
+            
+            boolean success = voucherdao.add(start_date, end_date, productId, newPrice);
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Thêm voucher thành công!");
+                loaddata();
+            } else {
+                JOptionPane.showMessageDialog(this, "Thêm voucher thất bại!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi nhập liệu! Hãy nhập đúng định dạng: dd/MM/yyyy và kiểm tra số liệu khác.");
+            e.printStackTrace();
+        }
+
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtpriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtpriceActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_txtpriceActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        try {
             java.util.Date startStr = txtstartdate.getDate();
             java.util.Date endStr = txtenddate.getDate();
             String regrexprice = "^[0-9]+(\\.[0-9]+)?$";
@@ -244,14 +323,7 @@ try {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void txtpriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtpriceActionPerformed
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_txtpriceActionPerformed
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -290,6 +362,7 @@ try {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
