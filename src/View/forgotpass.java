@@ -170,7 +170,7 @@ public class forgotpass extends javax.swing.JFrame {
     }
     public void sendEmail() throws MessagingException {
         String fromUser = "nguyenvandai3520@gmail.com"; 
-        String fromUserPassword = "kzjt cudb fnsc xlvs";         
+        String fromUserPassword = "";         
         String emailHost = "smtp.gmail.com";
         Transport transport = newSession.getTransport("smtp");
         transport.connect(emailHost, fromUser, fromUserPassword);
